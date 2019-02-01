@@ -1,0 +1,186 @@
+@keyframes my-atc-3{
+  50%{
+    right: 375rpx;
+    top: 530rpx;
+  }
+}
+.my-atc-1-3{
+  animation: my-atc-3 1.0s ease both;
+}
+
+@keyframes my-atc-2{
+  50%{
+    right: 193rpx;
+    top: 530rpx;
+  }
+}
+.my-atc-1-2{
+  animation: my-atc-2 1.0s ease both;
+}
+
+@keyframes my-atc-1{
+  50%{
+    right: 10rpx;
+    top: 530rpx;
+  }
+}
+.my-atc-1-1{
+  animation: my-atc-1 1.0s ease both;
+}
+
+@keyframes my-atc-6{
+  50%{
+    right: 375rpx;
+    top: 360rpx;
+  }
+}
+.my-atc-2-3{
+  animation: my-atc-6 1.0s ease both;
+}
+
+@keyframes my-atc-5{
+  50%{
+    right: 193rpx;
+    top: 360rpx;
+  }
+}
+.my-atc-2-2{
+  animation: my-atc-5 1.0s ease both;
+}
+
+@keyframes my-atc-4{
+  50%{
+    right: 10rpx;
+    top: 360rpx;
+  }
+}
+.my-atc-2-1{
+  animation: my-atc-4 1.0s ease both;
+}
+
+@keyframes my-atc-9{
+  50%{
+    right: 375rpx;
+    top: 170rpx;
+  }
+}
+.my-atc-3-3{
+  animation: my-atc-9 1.0s ease both;
+}
+
+@keyframes my-atc-8{
+  50%{
+    right: 193rpx;
+    top: 170rpx;
+  }
+}
+.my-atc-3-2{
+  animation: my-atc-8 1.0s ease both;
+}
+
+@keyframes my-atc-7{
+  50%{
+    right: 10rpx;
+    top: 170rpx;
+  }
+}
+.my-atc-3-1{
+  animation: my-atc-7 1.0s ease both;
+}
+
+/*=====================================================================*/
+@keyframes op-atc-1{
+  50%{
+    right: 375rpx;
+    top: 530rpx;
+  }
+}
+.op-atc-1-1{
+  animation: op-atc-1 1.0s ease both;
+}
+
+@keyframes op-atc-2{
+  50%{
+    right: 193rpx;
+    top: 530rpx;
+  }
+}
+.op-atc-1-2{
+  animation: op-atc-2 1.0s ease both;
+}
+
+@keyframes op-atc-3{
+  50%{
+    right: 10rpx;
+    top: 530rpx;
+  }
+}
+.op-atc-1-3{
+  animation: op-atc-3 1.0s ease both;
+}
+
+@keyframes op-atc-4{
+  50%{
+    right: 375rpx;
+    top: 710rpx;
+  }
+}
+.op-atc-2-1{
+  animation: op-atc-4 1.0s ease both;
+}
+
+@keyframes op-atc-5{
+  50%{
+    right: 193rpx;
+    top: 710rpx;
+  }
+}
+.op-atc-2-2{
+  animation: op-atc-5 1.0s ease both;
+}
+
+@keyframes op-atc-6{
+  50%{
+    right: 10rpx;
+    top: 710rpx;
+  }
+}
+.op-atc-2-3{
+  animation: op-atc-6 1.0s ease both;
+}
+
+@keyframes op-atc-7{
+  50%{
+    right: 375rpx;
+    top: 880rpx;
+  }
+}
+.op-atc-3-1{
+  animation: op-atc-7 1.0s ease both;
+}
+
+@keyframes op-atc-8{
+  50%{
+    right: 193rpx;
+    top: 880rpx;
+  }
+}
+.op-atc-3-2{
+  animation: op-atc-8 1.0s ease both;
+}
+
+@keyframes op-atc-9{
+  50%{
+    right: 10rpx;
+    top: 880rpx;
+  }
+}
+.op-atc-3-3{
+  animation: op-atc-9 1.0s ease both;
+}
+
+
+
+
+
+

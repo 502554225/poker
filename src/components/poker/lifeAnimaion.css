@@ -1,0 +1,134 @@
+
+.life100{
+  width: 100%;
+}
+
+@keyframes life90{
+  100%{
+    width: 90%;
+  }
+}
+.life90{
+  animation: life90 0.4s ease both;
+}
+
+@keyframes life80{
+  100%{
+    width: 80%;
+  }
+}
+.life80{
+  animation: life80 0.4s ease both;
+}
+
+@keyframes life70{
+  100%{
+    width: 70%;
+  }
+}
+.life70{
+  animation: life70 0.4s ease both;
+}
+
+@keyframes life60{
+  100%{
+    width: 60%;
+  }
+}
+.life60{
+  animation: life60 0.4s ease both;
+}
+
+@keyframes life50{
+  100%{
+    width: 50%;
+  }
+}
+.life50{
+  animation: life50 0.4s ease both;
+}
+
+@keyframes life40{
+  100%{
+    width: 40%;
+  }
+}
+.life40{
+  animation: life40 0.4s ease both;
+}
+
+@keyframes life30{
+  100%{
+    width: 30%;
+  }
+}
+.life30{
+  animation: life30 0.4s ease both;
+}
+
+@keyframes life20{
+  100%{
+    width: 20%;
+  }
+}
+.life20{
+  animation: life20 0.4s ease both;
+}
+
+@keyframes life10{
+  100%{
+    width: 10%;
+  }
+}
+.life10{
+  animation: life10 0.4s ease both;
+}
+
+@keyframes life0{
+  100%{
+    width: 0%;
+  }
+}
+.life0{
+  animation: life0 0.4s ease both;
+}
+/*//  vigour--------------------------------------------------------------------------------------------*/
+.vigour0{
+  width: 0;
+}
+
+@keyframes vigour25{
+   100%{
+     width: 25%;
+   }
+ }
+.vigour25{
+  animation: vigour25 0.8s ease both;
+}
+
+@keyframes vigour50{
+  100%{
+    width: 50%;
+  }
+}
+.vigour50{
+  animation: vigour50 0.8s ease both;
+}
+
+@keyframes vigour75{
+  100%{
+    width: 75%;
+  }
+}
+.vigour75{
+  animation: vigour75 0.8s ease both;
+}
+
+@keyframes vigour100{
+  100%{
+    width: 100%;
+  }
+}
+.vigour100{
+  animation: vigour100 0.8s ease both;
+}
