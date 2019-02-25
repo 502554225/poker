@@ -24,6 +24,7 @@ import store from '../../store/store.js'
 import service from '../../api/login.js'
 
 export default {
+  name:'index',
   data () {
     return {
       motto: 'Hello World',

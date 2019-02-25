@@ -70,6 +70,7 @@ import pokerbase from '@/components/poker-base/poker-base';
 import serviceL from '../../api/login.js'
 import service from '../../api/service.js';
 import store from '../../store/store.js';
+import pk from '../../utils/pokersControl.js';
 export default {
   components: {
     card,
@@ -103,7 +104,7 @@ export default {
     async toKapai(){
       this.page = 'kapai';
       service.GetMyAll().then(res=>{
-        this.pokers = res.data
+        this.pokers = pk.toPoker(res.data)
       })
     },
     toDrive(){

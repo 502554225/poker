@@ -12,6 +12,8 @@
 import poker from '../../components/poker/poker.vue'
 import skillList from './skillFuncList'
 import popup from '../../components/popup/popup.vue';
+import pk from '../../utils/pokersControl.js';
+import service from '../../api/service';
 export default {
   components:{
     poker,
@@ -676,10 +678,16 @@ export default {
     console.log('created')
 
   },
-  mounted(){
+  async mounted(){
     
     this.init()
     console.log('mounted')
+    // await service.GetMyAll().then(res=>{
+    //   this.my = pk.toPoker(res.data)
+    // })
+    await service.GetMyArray().then(res=>{
+      this.my = pk.toPoker(res.data)
+    })
     // window.addEventListener("popstate",function(e) {
     // wx.closeWindow();
     // },false)

@@ -20,12 +20,21 @@
       return new Promise((resolve, reject) => {
         wx.request({
           url: 'https://localhost:44322/api/'+url,
-          data: data,
+          data: data
+          // function(){
+          //   if(method == 'POST'){
+          //     return Util.json2Form(data)
+          //   }
+          //   else{
+          //     return data
+          //   }
+          // }
+          ,
           header: header,
           method: method,
           success: (res => {
             if (res.statusCode === 200) {
-              return res
+              // return res
               resolve(res)
             } 
             // else {

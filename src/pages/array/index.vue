@@ -461,7 +461,10 @@ export default {
   watch:{
     array(newData){
       console.log('bbbbb:',pk.toDBPoker(newData))
-      service.AddMyArray({pokerList:pk.toDBPoker(newData)})
+      let data = pk.toDBPoker(newData)
+      console.log('data:',JSON.stringify(data))
+      // service.Login({userId:"a123"})
+      service.AddMyArray({pokerList:JSON.stringify(data)})
     }
   },
   created () {
