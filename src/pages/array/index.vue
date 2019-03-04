@@ -259,15 +259,15 @@ export default {
       }
     },
     end(item,index){
-      this.array= this.array.filter(i=>{
-        if ((i.position.x!==item.position.x)||(i.position.y!==item.position.y)) {
+      this.array= this.array.filter(i=>{//先把正在移动这个卡牌在数组中删除，避免重复添加
+        if (i.pokerId!==item.pokerId) { //如果正在移动的卡牌的id等于布阵中的卡牌id，则布阵中的那种相同的卡牌先删除
           return i
         }
-      }) //先把正在移动这个卡牌在数组中删除，避免重复添加
+      }) 
       if (this.array.length>=5){
         this.yPum=10000
       }
-      if (this.xPum<=75){
+      if (this.xPum<=75){    //第一列
         if (this.yPum<=75){
           let res;
           this.array.forEach(i => {
@@ -326,7 +326,7 @@ export default {
           this.yPum=10000
         }
       }
-      else if (this.xPum<=185){
+      else if (this.xPum<=185){  //第二列
         if (this.yPum<=75){
           let res
           this.array.forEach(i => {
@@ -383,7 +383,7 @@ export default {
         }
         else this.yPum=10000
       }
-      else {
+      else {  //第三列
         if (this.yPum<=75){
           let res
           this.array.forEach(i => {
@@ -452,18 +452,59 @@ export default {
       this.position= { x: 0, y: 0 }
       this.nx= '';this.ny= '';this.dx= '';this.dy= '';this.xPum= '';this.yPum= ''
     },
-    initStyle(){
-      this.myPokers.forEach(()=>{
+    async initStyle(){
+      service.GetMyAll().then(res=>{ //获取我的卡牌
+        this.myPokers = pk.toPoker(res.data)
+      })
+      
+      await service.GetMyArray().then(res=>{ //获取我的布阵
+        this.array = pk.toPoker(res.data)
+      })
+      this.myPokers.forEach((pkItem,pkIndex)=>{ //将一布阵的卡牌设置位置
         this.style.push(0)
+        this.array.forEach(arItem=>{
+          if(pkItem.pokerId == arItem.pokerId){
+            if(arItem.position.x == 1){
+              if(arItem.position.y == 1){
+                this.$set(this.style,pkIndex,'left:75rpx;'+'top:75rpx;'+'position: absolute;')
+              }
+              else if(arItem.position.y == 2){
+                this.$set(this.style,pkIndex,'left:325rpx;'+'top:75rpx;'+'position: absolute;')
+              }
+              else if(arItem.position.y == 3){
+                this.$set(this.style,pkIndex,'left:575rpx;'+'top:75rpx;'+'position: absolute;')
+              }
+            }
+            else if(arItem.position.x == 2){
+              if(arItem.position.y == 1){
+                this.$set(this.style,pkIndex,'left:75rpx;'+'top:325rpx;'+'position: absolute;')
+              }
+              else if(arItem.position.y == 2){
+                this.$set(this.style,pkIndex,'left:325rpx;'+'top:325rpx;'+'position: absolute;')
+              }
+              else if(arItem.position.y == 3){
+                this.$set(this.style,pkIndex,'left:575rpx;'+'top:325rpx;'+'position: absolute;')
+              }
+            }
+            else if(arItem.position.x == 3){
+              if(arItem.position.y == 1){
+                this.$set(this.style,pkIndex,'left:75rpx;'+'top:575rpx;'+'position: absolute;')
+              }
+              else if(arItem.position.y == 2){
+                this.$set(this.style,pkIndex,'left:325rpx;'+'top:575rpx;'+'position: absolute;')
+              }
+              else if(arItem.position.y == 3){
+                this.$set(this.style,pkIndex,'left:575rpx;'+'top:575rpx;'+'position: absolute;')
+              }
+            }
+          }
+        })
       })
     }
   },
   watch:{
     array(newData){
-      console.log('bbbbb:',pk.toDBPoker(newData))
       let data = pk.toDBPoker(newData)
-      console.log('data:',JSON.stringify(data))
-      // service.Login({userId:"a123"})
       service.AddMyArray({pokerList:JSON.stringify(data)})
     }
   },
@@ -471,11 +512,9 @@ export default {
 
   },
   async mounted(){
-    this.initStyle();
-    service.GetMyAll().then(res=>{
-        this.myPokers = pk.toPoker(res.data)
-    })
-    console.log(this.myPokers)
+    
+    await this.initStyle();
+    // console.log(this.myPokers)
   }
 }
 </script>

@@ -219,7 +219,7 @@ export default {
 
   },
   methods: {
-    upDataOrder(){//更新攻击顺序,根据对方存活卡牌，一句X,Y坐标生成进攻顺序
+    upDataOrder(){//更新攻击顺序,根据对方存活卡牌，依据X,Y坐标生成进攻顺序
       this.myOrder=[[],[],[]]
       this.opOrder=[[],[],[]]
       for (let y=3;y>0;y--){
@@ -307,11 +307,9 @@ export default {
            if (vm.my.length===0||vm.opponent.length===0){ //如果一方牌全军覆没则结束对战
               if(vm.my.length===0) {
                 vm.$set(vm,'success',false)
-                console.log('ennnnnnnnnnnnnnnnnnnnnnnnd:',this.success)
               }
               else {
                 vm.$set(vm,'success',true)
-                console.log('ennnnnnnnnnnnnnnnnnnnnnnnd:',this.success)
               }
              clearInterval(c)
            }
@@ -467,108 +465,8 @@ export default {
       let vm=this
       skillList[skillNum](vm,str,num1,num2)
     },
-    init(){
+    async init(){
       this.userInfo= {}
-      this.my=[
-          {
-            life: 100,
-            aggressivity: 55,//攻击力
-            defenses: 5,//防御力
-            vigour: 100,//气势
-            crits: 0,//暴击
-            indomitableness: 0,//韧劲
-            evade: 0,//闪避
-            hit: 1,//命中
-            skill: 2,//技能
-            survival:1, //是否存在
-            action:'',
-            ascription:0,//归属 0为我
-            position:{
-              x:1,
-              y:1
-            },
-            isEvade:false
-          },
-          
-          {
-            life: 100,
-            aggressivity: 55,//攻击力
-            defenses: 5,//防御力
-            vigour: 100,//气势
-            crits: 0,//暴击
-            indomitableness: 0,//韧劲
-            evade: 0,//闪避
-            hit: 1,//命中
-            skill: 3,//技能
-            survival:1,
-            action:'',
-            ascription:0,
-            position:{
-              x:2,
-              y:1
-            },
-            isEvade:false
-          },
-          
-          {
-            life: 100,
-            aggressivity: 55,//攻击力
-            defenses: 5,//防御力
-            vigour: 0,//气势
-            crits: 0,//暴击
-            indomitableness: 0,//韧劲
-            evade: 0,//闪避
-            hit: 1,//命中
-            skill: 0,//技能
-            survival:1,
-            action:'',
-            ascription:0,
-            position:{
-              x:3,
-              y:1
-            },
-            isEvade:false
-          },
-          {
-            life: 100,
-            aggressivity: 55,//攻击力
-            defenses: 5,//防御力
-            vigour: 0,//气势
-            crits: 0,//暴击
-            indomitableness: 0,//韧劲
-            evade: 0,//闪避
-            hit: 1,//命中
-            skill: 0,//技能
-            survival:1,
-            action:'',
-            ascription:0,
-            position:{
-              x:3,
-              y:2
-            },
-            isEvade:false
-          },
-          {
-            life: 100,
-            aggressivity: 10,//攻击力
-            defenses: 5,//防御力
-            vigour: 0,//气势
-            crits: 0,//暴击
-            indomitableness: 0,//韧劲
-            evade: 0,//闪避
-            hit: 1,//命中
-            skill: 0,//技能
-            survival:1,
-            action:'',
-            ascription:0,
-            position:{
-              x:3,
-              y:3
-            },
-            isEvade:false
-          },
-
-      ]
       this.opponent=[
           {
             life: 100,
@@ -670,7 +568,27 @@ export default {
       this.myOrder=[[],[],[]]
       this.opOrder=[[],[],[]]
       this.success='111'
-      
+      await service.GetMyArray().then(res=>{
+        this.my = pk.toPoker(res.data)
+      })
+      // let mypk = []
+      console.log('1:',this.my)
+      let length = this.my.length
+      console.log('length:',length)
+      console.log('item:',this.my[0].position.x*10+this.my[0].position.y)
+      let min 
+      for(let j = 0; j < length; i++){ 
+        for(let i = length-1; i >= j; i--){
+          if((this.my[i].position.x*10+this.my[i].position.y) < (this.my[i-1].position.x*10+this.my[i-1].position.y)){
+            min = this.my[i]
+            this.my[i] = this.my[i-1]
+            this.my[i-1] = min
+            console.log('my:',this.my)
+            return this.my
+          }
+        }
+      }
+      console.log(this.my)
     }
   },
 
@@ -680,17 +598,8 @@ export default {
   },
   async mounted(){
     
-    this.init()
-    console.log('mounted')
-    // await service.GetMyAll().then(res=>{
-    //   this.my = pk.toPoker(res.data)
-    // })
-    await service.GetMyArray().then(res=>{
-      this.my = pk.toPoker(res.data)
-    })
-    // window.addEventListener("popstate",function(e) {
-    // wx.closeWindow();
-    // },false)
+    await this.init()
+    
     this.startGame()
   },
   onShow() {

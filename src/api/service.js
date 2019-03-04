@@ -7,7 +7,7 @@ service.AddMyPoker=async function(data){
     return request.post('Poker/AddMyPoker',data)
 }
 service.AddMyArray=async function(data){
-    return request.get('Poker/AddMyArray',data)
+    return request.post('Poker/AddMyArray',data)
 }
 service.GetMyArray=async function(data){
     return request.get('Poker/GetMyArray',data)

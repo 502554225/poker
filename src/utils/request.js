@@ -14,6 +14,9 @@
    var requestAll = function(url, data, method) {
       let cookie = wx.getStorageSync('cookieKey');//取出Cookie
       var header = { 'Content-Type': 'application/x-www-form-urlencoded'};
+      // if(url == 'Poker/AddMyArray'){
+      //   header = { 'Content-Type': 'text/html'};
+      // }
       if (cookie) {
           header.Cookie = cookie;
       } 
