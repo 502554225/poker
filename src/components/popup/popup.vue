@@ -34,7 +34,7 @@ export default {
     methods:{
         confirm(){
            wx.redirectTo({
-               url:'/pages/array/main'
+               url:'/pages/logs/main'
            })
         }
     }

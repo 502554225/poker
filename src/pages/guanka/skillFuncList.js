@@ -41,7 +41,6 @@ export default [
   },
   async function(vm,str,num1,num2) {//skill 3 群体攻击0.7倍
     if (str==='op'){
-      // vm.$set(vm.opponent[num1],'action',"op-atc-" + vm.my[num2].position.x + '-' + vm.my[num2].position.y)
       setTimeout(await function() {
         vm.opponent.forEach((item,index)=>{
           vm.damage(str,num1,index,0.7)
@@ -50,10 +49,115 @@ export default [
       vm.my[num1].vigour=0
     }
     else {
-      // vm.$set(vm.opponent[num1],'action',"op-atc-" + vm.my[num2].position.x + '-' + vm.my[num2].position.y)
       setTimeout(await function() {
         vm.my.forEach((item,index)=>{
           vm.damage(str,num1,index,0.7)
+        })
+      },400)
+      vm.opponent[num1].vigour=0
+    }
+  },
+
+  async function(vm,str,num1,num2) {//skill 4 群体攻击1.0倍
+    if (str==='op'){
+      setTimeout(await function() {
+        vm.opponent.forEach((item,index)=>{
+          vm.damage(str,num1,index,1)
+        })
+      },400)
+      vm.my[num1].vigour=0
+    }
+    else {
+      setTimeout(await function() {
+        vm.my.forEach((item,index)=>{
+          vm.damage(str,num1,index,1)
+        })
+      },400)
+      vm.opponent[num1].vigour=0
+    }
+  },
+
+  async function(vm,str,num1,num2) {//skill 5 群体攻击0.7倍
+    if (str==='op'){
+      setTimeout(await function() {
+        vm.opponent.forEach((item,index)=>{
+          vm.damage(str,num1,index,1.3)
+        })
+      },400)
+      vm.my[num1].vigour=0
+    }
+    else {
+      setTimeout(await function() {
+        vm.my.forEach((item,index)=>{
+          vm.damage(str,num1,index,1.3)
+        })
+      },400)
+      vm.opponent[num1].vigour=0
+    }
+  },
+
+  async function(vm,str,num1,num2) {//skill 6 最后一排攻击1.3倍
+    if (str==='op'){
+      setTimeout(await function() {
+        vm.opponent.forEach((item,index)=>{
+          if(item.position.x === 3){
+            vm.damage(str,num1,index,1.3)
+          }
+        })
+      },400)
+      vm.my[num1].vigour=0
+    }
+    else {
+      setTimeout(await function() {
+        vm.my.forEach((item,index)=>{
+          if(item.position.x === 3){
+            vm.damage(str,num1,index,1.3)
+          }
+        })
+      },400)
+      vm.opponent[num1].vigour=0
+    }
+  },
+
+  async function(vm,str,num1,num2) {//skill 7 最后一排攻击1.6倍
+    if (str==='op'){
+      setTimeout(await function() {
+        vm.opponent.forEach((item,index)=>{
+          if(item.position.x === 3){
+            vm.damage(str,num1,index,1.6)
+          }
+        })
+      },400)
+      vm.my[num1].vigour=0
+    }
+    else {
+      setTimeout(await function() {
+        vm.my.forEach((item,index)=>{
+          if(item.position.x === 3){
+            vm.damage(str,num1,index,1.6)
+          }
+        })
+      },400)
+      vm.opponent[num1].vigour=0
+    }
+  },
+  async function(vm,str,num1,num2) {//skill 8 最后一排攻击1.3倍
+    if (str==='op'){
+      setTimeout(await function() {
+        vm.opponent.forEach((item,index)=>{
+          if(item.position.x === 3){
+            vm.damage(str,num1,index,2)
+          }
+        })
+      },400)
+      vm.my[num1].vigour=0
+    }
+    else {
+      setTimeout(await function() {
+        vm.my.forEach((item,index)=>{
+          if(item.position.x === 3){
+            vm.damage(str,num1,index,2)
+          }
         })
       },400)
       vm.opponent[num1].vigour=0

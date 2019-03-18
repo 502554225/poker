@@ -1,5 +1,5 @@
 <template>
-    <div class="poker-base" :style="{'width':width+'rpx','height':1.5*width+'rpx'}" @click="checkit">
+    <div class="poker-base" :class="{'isChoose' : pokerData.isChoose}" :style="{'width':width+'rpx','height':1.5*width+'rpx','margin-bottom':marginBottom+'rpx'}" @click="choosePoker">
         <!-- <div class="back"></div> -->
         <img :class="{'conb' : isCheck}" :src="src" alt="">
         <img v-if="check" :class="{'cona' : isCheck}" src="../../../static/img/back-face-pattern.png" alt="">
@@ -8,6 +8,10 @@
 <script>
 export default {
     props:{
+        marginBottom:{
+            type:Number,
+            default:0
+        },
         width:{
             type:String,
             default:'170'
@@ -15,29 +19,94 @@ export default {
         check:{
             type:Boolean,
             default:false
-        }
+        },
+        pokerData:{
+            type:Object,
+            default:{
+                pokerId:0,
+                pokerName:0,
+                life: 0,
+                aggressivity: 0,//攻击力
+                defenses: 0,//防御力
+                vigour: 0,//气势
+                crits: 0,//暴击
+                indomitableness: 0,//韧劲
+                evade:0,//闪避
+                hit: 0,//命中
+                skill: 0,//技能
+                survival:0,
+                action:'',
+                ascription:0,
+                position:{
+                x:0,
+                y:0
+                },
+                level:0,
+                isChoose:false
+            }
+        },
+        // isChoose:{
+        //     type:Boolean,
+        //     default:false
+        // }
     },
+    // computed:{
+    //     isChoose(){
+    //        return this.pokerData.isChoose 
+    //     }
+    // },
     data(){
         return{
             src:'../../../static/img/battle-bg.png',
-            isCheck:false
+            isCheck:false,
+            
         }
     },
+    mounted(){
+        this.init()
+    },
     methods:{
-        checkit(){
+        choosePoker(){
+            // console.log('zizizii')
+            // this.isChoose = !this.isChoose
+            // if(this.isChoose){
+                console.log('poker:',this.pokerData)
+                this.$emit('choosePoker',this.pokerData)
+            // }
             if(this.check){
-                console.log("diaji")
                 this.$set(this,'isCheck',true)
-                            console.log(this.isCheck)
-
             }
+        },
+        init(){
+            if(this.pokerData){
+                this.src = '../../../static/img/battle-bg.png'  //未填写poker的src 这是默认的
+            }
+        },
+        checkit(){
+            
         }
+    },
+    watch:{
+        // 'pokerData.isChoose':{
+        //     deep:true,
+        //     handler(data){ 
+        //             // let hasChoose =   this.pokerData.hasOwnProperty('isChoose')
+        //             if(!this.pokerData||!this.pokerData.isChoose) this.isChoose = false
+        //             else this.isChoose = true
+        //     },
+        //     immediate: true,
+            
+        // }   
     }
 }
 </script>
 <style scoped>
 .poker-base{
     position: relative;
+    border: 1px solid #000
+}
+.isChoose{
+    border: 1px solid #fff
 }
 /* .back{
     background: url('../../../static/img/back-face-pattern.png') no-repeat center;

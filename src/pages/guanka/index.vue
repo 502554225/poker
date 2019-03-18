@@ -14,6 +14,10 @@ import skillList from './skillFuncList'
 import popup from '../../components/popup/popup.vue';
 import pk from '../../utils/pokersControl.js';
 import service from '../../api/service';
+import opList from '../../utils/opList.js'
+import { setTimeout } from 'timers';
+import store from '../../store/store';
+import levelList from '../../utils/levelList.js';
 export default {
   components:{
     poker,
@@ -22,197 +26,13 @@ export default {
   data () { 
     return {
       userInfo: {},
-      my:[
-          // {
-          //   life: 100,
-          //   aggressivity: 55,//攻击力
-          //   defenses: 5,//防御力
-          //   vigour: 100,//气势
-          //   crits: 0,//暴击
-          //   indomitableness: 0,//韧劲
-          //   evade: 0,//闪避
-          //   hit: 1,//命中
-          //   skill: 2,//技能
-          //   survival:1, //是否存在
-          //   action:'',
-          //   ascription:0,//归属 0为我
-          //   position:{
-          //     x:1,
-          //     y:1
-          //   }
-          // },
-          
-          // {
-          //   life: 100,
-          //   aggressivity: 55,//攻击力
-          //   defenses: 5,//防御力
-          //   vigour: 100,//气势
-          //   crits: 0,//暴击
-          //   indomitableness: 0,//韧劲
-          //   evade: 0,//闪避
-          //   hit: 1,//命中
-          //   skill: 3,//技能
-          //   survival:1,
-          //   action:'',
-          //   ascription:0,
-          //   position:{
-          //     x:2,
-          //     y:1
-          //   }
-          // },
-          
-          // {
-          //   life: 100,
-          //   aggressivity: 55,//攻击力
-          //   defenses: 5,//防御力
-          //   vigour: 0,//气势
-          //   crits: 0,//暴击
-          //   indomitableness: 0,//韧劲
-          //   evade: 0,//闪避
-          //   hit: 1,//命中
-          //   skill: 0,//技能
-          //   survival:1,
-          //   action:'',
-          //   ascription:0,
-          //   position:{
-          //     x:3,
-          //     y:1
-          //   }
-          // },
-          // {
-          //   life: 100,
-          //   aggressivity: 55,//攻击力
-          //   defenses: 5,//防御力
-          //   vigour: 0,//气势
-          //   crits: 0,//暴击
-          //   indomitableness: 0,//韧劲
-          //   evade: 0,//闪避
-          //   hit: 1,//命中
-          //   skill: 0,//技能
-          //   survival:1,
-          //   action:'',
-          //   ascription:0,
-          //   position:{
-          //     x:3,
-          //     y:2
-          //   }
-          // },
-          // {
-          //   life: 100,
-          //   aggressivity: 10,//攻击力
-          //   defenses: 5,//防御力
-          //   vigour: 0,//气势
-          //   crits: 0,//暴击
-          //   indomitableness: 0,//韧劲
-          //   evade: 0,//闪避
-          //   hit: 1,//命中
-          //   skill: 0,//技能
-          //   survival:1,
-          //   action:'',
-          //   ascription:0,
-          //   position:{
-          //     x:3,
-          //     y:3
-          //   }
-          // },
-
-      ],
-      opponent:[
-          // {
-          //   life: 100,
-          //   aggressivity: 10,//攻击力
-          //   defenses: 5,//防御力
-          //   vigour: 0,//气势
-          //   crits: 0,//暴击
-          //   indomitableness: 0,//韧劲
-          //   evade: 0,//闪避
-          //   hit: 1,//命中
-          //   skill: 0,//技能
-          //   survival:1,
-          //   action:'',
-          //   ascription:1,
-          //   position:{
-          //     x:1,
-          //     y:1
-          //   }
-          // },
-          // {
-          //   life: 100,
-          //   aggressivity: 10,//攻击力
-          //   defenses: 5,//防御力
-          //   vigour: 0,//气势
-          //   crits: 0,//暴击
-          //   indomitableness: 0,//韧劲
-          //   evade: 0,//闪避
-          //   hit: 1,//命中
-          //   skill: 0,//技能
-          //   survival:1,
-          //   action:'',
-          //   ascription:1,
-          //   position:{
-          //     x:2,
-          //     y:3
-          //   }
-          // },
-          // {
-          //   life: 100,
-          //   aggressivity: 10,//攻击力
-          //   defenses: 5,//防御力
-          //   vigour: 0,//气势
-          //   crits: 0,//暴击
-          //   indomitableness: 0,//韧劲
-          //   evade: 0,//闪避
-          //   hit: 1,//命中
-          //   skill: 0,//技能
-          //   survival:1,
-          //   action:'',
-          //   ascription:1,
-          //   position:{
-          //     x:3,
-          //     y:1
-          //   }
-          // },
-          // {
-          //   life: 100,
-          //   aggressivity: 10,//攻击力
-          //   defenses: 5,//防御力
-          //   vigour: 0,//气势
-          //   crits: 0,//暴击
-          //   indomitableness: 0,//韧劲
-          //   evade: 0,//闪避
-          //   hit: 1,//命中
-          //   skill: 0,//技能
-          //   survival:1,
-          //   action:'',
-          //   ascription:1,
-          //   position:{
-          //     x:3,
-          //     y:2
-          //   }
-          // },
-          // {
-          //   life: 100,
-          //   aggressivity: 10,//攻击力
-          //   defenses: 5,//防御力
-          //   vigour: 0,//气势
-          //   crits: 0,//暴击
-          //   indomitableness: 0,//韧劲
-          //   evade: 0,//闪避
-          //   hit: 1,//命中
-          //   skill: 0,//技能
-          //   survival:1,
-          //   action:'',
-          //   ascription:1,
-          //   position:{
-          //     x:3,
-          //     y:3
-          //   }
-          // },
-
-      ],
+      my:[],
+      opponent:[],
       myOrder:[[],[],[]],
       opOrder:[[],[],[]],
-      success:'111'
+      success:'111',
+      guanka:0,
+      c:0
     }
   },
   computed:{
@@ -220,13 +40,14 @@ export default {
   },
   methods: {
     upDataOrder(){//更新攻击顺序,根据对方存活卡牌，依据X,Y坐标生成进攻顺序
+      console.log('更新进攻顺序')
       this.myOrder=[[],[],[]]
       this.opOrder=[[],[],[]]
       for (let y=3;y>0;y--){
         for(let x=1;x<4;x++){
           this.opponent.forEach((item,index)=>{
             if ((item.position.x===x)&&(item.position.y===y)){
-              console.log(x,y)
+              // console.log(x,y)
               this.myOrder[0].push(index)
             }
           })
@@ -267,36 +88,54 @@ export default {
       }
     },
     async startGame(){
-
-      console.log('对战开始')
       let vm=this
       vm.roundStart()
     },
     async roundStart(){
       console.log('回合开始')
       this.upDataOrder(); //更新进攻顺序
-      console.log(this.myOrder,this.opOrder)
       let index = 0;
       let vm=this
       let time =0
-      let c= setInterval(async function() {
-
+      this.c= setInterval(async function() {
+           if ((index>=(vm.my.length))&&(index>=(vm.opponent.length))){ //终止本回合
+             console.log('终止本回合:index:',index,'mylength:',vm.my.length,'oplength:',vm.opponent.length)
+             vm.my.forEach(item=>{
+               item.action=''
+             })
+             vm.opponent.forEach(item=>{
+               item.action=''
+             })
+             clearInterval(vm.c)
+             vm.upDataOrder()
+            //  console.log(vm.my,vm.opponent)
+            //  console.log('length',vm.my.length,vm.opponent.length)
+             if ((vm.my.length!==0)&&(vm.opponent.length!==0)){ //双方是否还有卡牌存在，是则开启下一回合
+               vm.roundStart()
+             }
+           }  
+          console.log('每方的第',index+1,'张卡牌出战')
          if (vm.my[index]) { //我方
-           console.log('动作')
-           console.log('index',index)
            let item = vm.myOrder[vm.my[index].position.y-1].find(item=>{ //根据index找到第一个符合条件的进攻对象
               return vm.opponent[item]
            })
-           vm.myAttack(index,item)
+           console.log(item)
+          await vm.myAttack(index,item)
+           console.log('我方',vm.my[index].position.x,",",vm.my[index].position.y,'进攻',vm.opponent[item].position.x,',',vm.opponent[item].position.y,'完毕')
          }
+
+          vm.isGameOver()
          if (vm.opponent[index]) { //敌方
            setTimeout(await function() {
               let item = vm.opOrder[vm.opponent[index].position.y-1].find(item=>{
                  return vm.my[item]
                })
              vm.opAttack(index,item)
+             console.log('敌方',vm.opponent[index].position.x,",",vm.opponent[index].position.y,'进攻',vm.my[item].position.x,',',vm.my[item].position.y,'完毕')
+
            },1200)
          }
+
          setTimeout(await function() {
            if (!vm.opponent[index]) {
              time = 1200;
@@ -304,45 +143,41 @@ export default {
            else{
              time =0;
            }
-           if (vm.my.length===0||vm.opponent.length===0){ //如果一方牌全军覆没则结束对战
-              if(vm.my.length===0) {
-                vm.$set(vm,'success',false)
-              }
-              else {
-                vm.$set(vm,'success',true)
-              }
-             clearInterval(c)
-           }
-           if ((index>=(vm.my.length-1))&&(index>=(vm.opponent.length-1))){ //终止本回合
-             console.log('next')
-             vm.my.forEach(item=>{
-               item.action=''
-             })
-             vm.opponent.forEach(item=>{
-               item.action=''
-             })
-             clearInterval(c)
-             vm.upDataOrder()
-             console.log(vm.my,vm.opponent)
-             console.log('length',vm.my.length,vm.opponent.length)
-             if ((vm.my.length!==0)&&(vm.opponent.length!==0)){ //双方是否还有卡牌存在，是则开启下一回合
-               vm.roundStart()
-             }
-
-           }
+            vm.isGameOver()
+          
            index++
-           console.log(index)
          },1200)
      },(2400-time))
       this.$once('hook:onUnload', () => {         //返回时关闭定时器   
-          clearInterval(c);                                    
+          clearInterval(this.c);                                    
       })
     },
-    myAttack:async function(num1, num2) {
-      console.log('myA',num1,num2)
+    async isGameOver(){ 
+      let vm = this
+      if (vm.my.length===0||vm.opponent.length===0){ //如果一方牌全军覆没则结束对战
+        if(vm.my.length===0) {
+          vm.$set(vm,'success',false)
+        }
+        else {
+          vm.$set(vm,'success',true)
+          let myInfor = store.state.myInfor
+          await service.AddLevel({level:levelList[myInfor.levelG-1].level})
+          console.log(myInfor.levelG,';;;',this.guanka)
+          if(myInfor.levelG<=this.guanka){
+            myInfor.drawNum+=levelList[myInfor.levelG-1].drawNum
+            myInfor.gold+=levelList[myInfor.levelG-1].gold
+            myInfor.levelG++ 
+            await service.SaveMyInfor({'infor':JSON.stringify(myInfor)}) //更新关卡
+          }
+        }
+        clearInterval(this.c)
+      }
+    },
+    myAttack:async function(num1, num2) { 
+      // console.log('myA',num1,num2)
       let vm =this
       if (vm.my[num1].vigour>=100){ //如果气势大于100则使用技能
-        console.log('>100<')
+        // console.log('>100<')
         await this.skill('op',num1,num2,this.my[num1].skill)
       }
       else{ //否则普通攻击
@@ -358,25 +193,25 @@ export default {
 
     },
     async opAttack(num1,num2){
-      console.log('opA',num1,num2)
       let vm =this
-      if (vm.my[num1].vigour>=100){
-        console.log('>100<')
+      let action =  this.opponent[num1].action
+      console.log('前class:',action)
+      if (vm.opponent[num1].vigour>=100){
+        // console.log('>100<')
         this.skill('my',num1,num2,this.opponent[num1].skill)
       }
       else {
-        this.$set(this.opponent[num1], 'action', "op-atc-" + vm.my[num2].position.x + '-' + vm.my[num2].position.y)
+        // this.$set(this.opponent[num1], 'action', "op-atc-" + vm.my[num2].position.x + '-' + vm.my[num2].position.y)
+       this.opponent[num1].action = "op-atc-" + vm.my[num2].position.x + '-' + vm.my[num2].position.y
+       console.log('后class:',this.opponent[num1].action)
         setTimeout(await function() {
           vm.damage('my',num1,num2,1)
         },400)
-
-
-          this.$set(this.opponent[num1],'vigour',this.opponent[num1].vigour+25)
-          this.$set(this.my[num2],'vigour',this.my[num2].vigour+25)
-
+        this.$set(this.opponent[num1],'vigour',this.opponent[num1].vigour+25)
+        this.$set(this.my[num2],'vigour',this.my[num2].vigour+25)
       }
     },
-    damage(str,num1,num2,x){ //普工
+    damage(str,num1,num2,x){ //伤害计算
       let poker1;
       let poker2;
       let damage;
@@ -396,7 +231,7 @@ export default {
         let defenses2= poker2.defenses;
 
         let doubleDamage=1.5;//爆伤
-        let hit = poker1.hit-poker2.evade;
+        let hit = (1-0.2)*(1-poker2.evade)*(poker1.hit);      
         let crits = poker1.crits-poker2.indomitableness;
         if (Math.random()>=hit){//生成随机数，若大于命中几率则闪避
           // console.log('闪避')
@@ -433,7 +268,8 @@ export default {
             doubleDamage =1;
             // console.log('没暴击')
           }
-          damage = (aggressivity1-defenses2)*doubleDamage*x;
+          damage = (aggressivity1)*doubleDamage*x-defenses2;
+          if(damage<=0) damage = 1
         // }
       }
 
@@ -465,117 +301,32 @@ export default {
       let vm=this
       skillList[skillNum](vm,str,num1,num2)
     },
-    async init(){
+    async init(levelG){
       this.userInfo= {}
-      this.opponent=[
-          {
-            life: 100,
-            aggressivity: 10,//攻击力
-            defenses: 5,//防御力
-            vigour: 0,//气势
-            crits: 0,//暴击
-            indomitableness: 0,//韧劲
-            evade: 0,//闪避
-            hit: 1,//命中
-            skill: 0,//技能
-            survival:1,
-            action:'',
-            ascription:1,
-            position:{
-              x:1,
-              y:1
-            },
-            isEvade:false
-          },
-          {
-            life: 100,
-            aggressivity: 10,//攻击力
-            defenses: 5,//防御力
-            vigour: 0,//气势
-            crits: 0,//暴击
-            indomitableness: 0,//韧劲
-            evade: 0,//闪避
-            hit: 1,//命中
-            skill: 0,//技能
-            survival:1,
-            action:'',
-            ascription:1,
-            position:{
-              x:2,
-              y:3
-            },
-            isEvade:false
-          },
-          {
-            life: 100,
-            aggressivity: 10,//攻击力
-            defenses: 5,//防御力
-            vigour: 0,//气势
-            crits: 0,//暴击
-            indomitableness: 0,//韧劲
-            evade: 0,//闪避
-            hit: 1,//命中
-            skill: 0,//技能
-            survival:1,
-            action:'',
-            ascription:1,
-            position:{
-              x:3,
-              y:1
-            },
-            isEvade:false
-          },
-          {
-            life: 100,
-            aggressivity: 10,//攻击力
-            defenses: 5,//防御力
-            vigour: 0,//气势
-            crits: 0,//暴击
-            indomitableness: 0,//韧劲
-            evade: 0,//闪避
-            hit: 1,//命中
-            skill: 0,//技能
-            survival:1,
-            action:'',
-            ascription:1,
-            position:{
-              x:3,
-              y:2
-            },
-            isEvade:false
-          },
-          {
-            life: 100,
-            aggressivity: 10,//攻击力
-            defenses: 5,//防御力
-            vigour: 0,//气势
-            crits: 0,//暴击
-            indomitableness: 0,//韧劲
-            evade: 0,//闪避
-            hit: 0,//命中
-            skill: 0,//技能
-            survival:1,
-            action:'',
-            ascription:1,
-            position:{
-              x:3,
-              y:3
-            },
-            isEvade:false
-          },
-
-      ]
+      // let levelG = store.state.myInfor.levelG
+      let opponent 
+      let my
+      await service.ToArray({'opList':JSON.stringify(opList[levelG-1])}).then(res=>{
+        opponent = pk.computed(pk.toPoker(res.data))
+      })  
+      opponent.forEach(item=>{
+        item.isEvade = false
+      })
+      this.opponent = opponent
       this.myOrder=[[],[],[]]
       this.opOrder=[[],[],[]]
       this.success='111'
       await service.GetMyArray().then(res=>{
-        this.my = pk.toPoker(res.data)
+        my = pk.computed(pk.toPoker(res.data))
       })
+      my.forEach(item=>{
+        item.isEvade = false
+      })
+      this.my = my
       // let mypk = []
-      console.log('1:',this.my)
+      console.log('my:',this.my)
       let length = this.my.length
-      console.log('length:',length)
-      console.log('item:',this.my[0].position.x*10+this.my[0].position.y)
+      console.log('op:',this.opponent)
       let min 
       for(let j = 0; j < length; i++){ 
         for(let i = length-1; i >= j; i--){
@@ -591,28 +342,16 @@ export default {
       console.log(this.my)
     }
   },
-
-  created () {
-    console.log('created')
-
+  async onLoad(){
+    
+  },
+  async onShow(){
+    this.guanka = this.$root.$mp.query.num
+    await this.init(this.guanka)
+    this.startGame()
   },
   async mounted(){
     
-    await this.init()
-    
-    this.startGame()
-  },
-  onShow() {
-    console.log('onshow')
-  },
-  onHide() {
-    console.log('onHide')
-  },
-  onLoad(){
-   console.log('onLoad')
-  },
-  destory(){
-    console.log('destory')
   },
   onUnload(){
     console.log('onUnload')

@@ -1,0 +1,62 @@
+<template>
+        <div class="levelBody">
+            <img class="img" src="../../static/img/back-face-pattern.png" >
+            <div class="levelInfor">
+                <div>第{{num}}关：名字</div>
+                <div class="levelBtn">
+                    <div @click="toGuanka">开始闯关</div>
+                    <div>扫荡关卡</div>
+                </div>
+            </div>
+        </div>
+</template>
+<script>
+import store from '../store/store.js';
+export default {
+    props:{
+        opponent:{
+            type:Object,
+            default:{}
+        },
+        num:{
+            type:Number,
+            default:1
+        }
+    },
+    data(){
+        return{
+
+        }
+    },
+    methods:{
+        toGuanka(){
+            wx.navigateTo({
+                url:`/pages/guanka/main?num=${this.num}`
+            })
+        },
+
+    }
+}
+</script>
+
+<style>
+.levelBody{
+    width: 725rpx;
+    height: 200rpx;
+    display: flex;
+    background: red;
+}
+.img{
+    margin-top: 10rpx;
+    margin-left: 10rpx;
+    width: 180rpx;
+    height: 180rpx;
+}
+.levelInfor{
+    flex: auto;
+    margin-top: 10rpx;
+    margin-right: 10rpx;
+    height: 180rpx;
+    background: #fff;
+}
+</style>

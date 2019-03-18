@@ -1,12 +1,13 @@
 <template>
   <div class="con">
-    <!--<poker></poker>-->
       <div class="array">
         <div class="array-item" v-for="(item,index) in pokers" :key="index">item</div>
       </div>
       <div class="poker-box">
         <!--<poker  v-for="item in myPokers" :pokerDara="item" @touchstart="down" @touchmove="move" @touchend="end" :style="style"></poker>-->
-        <div v-for="(item,index) in myPokers" :key="index" class="try" style="width: 100rpx;height: 100rpx;background: #777812;" @touchstart="down" @touchmove="move($event,index)" @touchend="end(item,index)" :style="style[index]"></div>
+        <div v-for="(item,index) in myPokers" :key="index" class="try" style="width: 150rpx;height: 150rpx;background: #777812;" @touchstart="down" @touchmove="move($event,index)" @touchend="end(item,index)" :style="style[index]">
+          <div class="arrayPokerShow" :style="{'background':'url('+pokerImg[item.pokerId]+')'}">{{pokerImg[item.pokerId]}}</div>
+        </div>
       </div>
   </div>
 </template>
@@ -16,6 +17,8 @@ import draggable from 'vuedraggable'
 import poker from '../../components/poker/poker.vue'
 import service from '../../api/service';
 import pk from '../../utils/pokersControl.js';
+import pokerbase from '@/components/poker-base/poker-base';
+import imgList from '../../utils/imgSrc.js';
 export default {
   name:'1',
   data () {
@@ -201,18 +204,25 @@ export default {
       flags: false,
       position: { x: 0, y: 0 },
       nx: '', ny: '', dx: '', dy: '', xPum: '', yPum: '',
-      style:[]
+      style:[],
+      pokerImg:imgList
     }
   },
 
   components: {
     draggable,
-    poker
+    poker,
+    pokerbase
   },
 
   methods: {
+    pokerClass(item){
+      console.log('item',item,this.pokerImg[item.pokerId])
 
+      return this.pokerImg[item.pokerId]
+    },
     down(event){
+      
       this.flags = true;
       let a111=event.target
       var touch;
@@ -225,11 +235,12 @@ export default {
       this.position.y = touch.clientY;
       this.dx = a111.offsetLeft;
       this.dy = a111.offsetTop;
+      
     },
     move($event,index){
-
+      console.log('position.x:',this.position.x,'dx:',this.dx)
       let event =$event
-      console.log(event)
+      // console.log(event)
       if(this.flags){
         var touch ;
         if(event.touches){
@@ -453,7 +464,7 @@ export default {
       this.nx= '';this.ny= '';this.dx= '';this.dy= '';this.xPum= '';this.yPum= ''
     },
     async initStyle(){
-      service.GetMyAll().then(res=>{ //获取我的卡牌
+      await service.GetMyAll().then(res=>{ //获取我的卡牌
         this.myPokers = pk.toPoker(res.data)
       })
       
@@ -508,13 +519,12 @@ export default {
       service.AddMyArray({pokerList:JSON.stringify(data)})
     }
   },
-  created () {
-
+  async onLoad () {
+     await this.initStyle();
   },
   async mounted(){
     
-    await this.initStyle();
-    // console.log(this.myPokers)
+    console.log(this.myPokers,this.pokerImg[this.myPokers[0].pokerId],this.myPokers[0].pokerId)
   }
 }
 </script>
@@ -542,5 +552,12 @@ export default {
   }
   .poker-box{
     display: flex;
+    
+  }
+  .arrayPokerShow{
+    width: 150rpx;
+    height: 150rpx;
+    background-size: cover;
+    background-position: 100% 100%;
   }
 </style>
