@@ -5,7 +5,7 @@
                 <div>第{{num}}关：名字</div>
                 <div class="levelBtn">
                     <div @click="toGuanka">开始闯关</div>
-                    <div>扫荡关卡</div>
+                    <div @click="saodang">扫荡关卡</div>
                 </div>
             </div>
         </div>
@@ -14,7 +14,7 @@
 import store from '../store/store.js';
 export default {
     props:{
-        opponent:{
+        levelInfor:{
             type:Object,
             default:{}
         },
@@ -34,12 +34,14 @@ export default {
                 url:`/pages/guanka/main?num=${this.num}`
             })
         },
-
+        saodang(){
+            this.$emit('saodang',this.num)
+        }
     }
 }
 </script>
 
-<style>
+<style scoped>
 .levelBody{
     width: 725rpx;
     height: 200rpx;

@@ -6,6 +6,7 @@
     </div>
 </template>
 <script>
+import service from '../../api/service.js';
 export default {
     props:{
         marginBottom:{
@@ -66,15 +67,38 @@ export default {
         this.init()
     },
     methods:{
+         async drive(){
+            let len
+            let allPokers
+            await service.GetAll().then(res=>{
+                len = res.data.length
+                allPokers = res.data
+            })
+            let pokerid = Math.floor(Math.random()*len).toString()
+            await service.GetMyAll().then(res=>{
+                if(allPokers === res.data){
+                    this.$emit('popup')// 弹窗提示 抽满了
+                    return
+                }
+                res.data.forEach(item=>{
+                if(item.pokerId === pokerid){
+                    this.drive()
+                    return
+                }
+                })
+            })
+            service.AddMyPoker({pokerId:pokerid}).then(res=>{
+                if(res.data.length>0){
+                //出现抽出的卡牌
+                }
+            }) 
+        },
         choosePoker(){
-            // console.log('zizizii')
-            // this.isChoose = !this.isChoose
-            // if(this.isChoose){
-                console.log('poker:',this.pokerData)
-                this.$emit('choosePoker',this.pokerData)
-            // }
+            console.log('poker:',this.pokerData)
+            this.$emit('choosePoker',this.pokerData)
             if(this.check){
                 this.$set(this,'isCheck',true)
+
             }
         },
         init(){

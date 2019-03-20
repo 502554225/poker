@@ -4,7 +4,7 @@
       <poker v-for="(item,index) in opponent" :key="index" :pokerData="item"></poker>
       <poker v-for="(item,index) in my" :key="index" :pokerData="item"></poker>
     </div>
-    <popup  v-if="(success===true) || (success === false)" :success="success"></popup>
+    <popup :title="success ? '成功' : '失败'" :words="success ? '你已消灭所有敌人' : '还差那么一点点'" :to="{page:'logs'}" :show="popupShow"></popup>
   </div>
 </template>)
 
@@ -32,7 +32,8 @@ export default {
       opOrder:[[],[],[]],
       success:'111',
       guanka:0,
-      c:0
+      c:0,
+      popupShow:false
     }
   },
   computed:{
@@ -157,9 +158,11 @@ export default {
       if (vm.my.length===0||vm.opponent.length===0){ //如果一方牌全军覆没则结束对战
         if(vm.my.length===0) {
           vm.$set(vm,'success',false)
+          this.popupShow = true
         }
         else {
           vm.$set(vm,'success',true)
+          this.popupShow = true
           let myInfor = store.state.myInfor
           await service.AddLevel({level:levelList[myInfor.levelG-1].level})
           console.log(myInfor.levelG,';;;',this.guanka)
@@ -328,9 +331,10 @@ export default {
       let length = this.my.length
       console.log('op:',this.opponent)
       let min 
-      for(let j = 0; j < length; i++){ 
-        for(let i = length-1; i >= j; i--){
-          if((this.my[i].position.x*10+this.my[i].position.y) < (this.my[i-1].position.x*10+this.my[i-1].position.y)){
+      console.log('len:',length)
+      for(let j = 0; j < length; j++){ 
+        for(let i = length-1; i > j; i--){
+          if((this.my[i].position.x*10+this.my[i].position.y)<(this.my[i-1].position.x*10+this.my[i-1].position.y)){
             min = this.my[i]
             this.my[i] = this.my[i-1]
             this.my[i-1] = min
@@ -339,7 +343,6 @@ export default {
           }
         }
       }
-      console.log(this.my)
     }
   },
   async onLoad(){
@@ -374,8 +377,5 @@ export default {
   margin-right: 100rpx;
   height: 100vh;
   background: #91f;
-}
-.popup{
- 
 }
 </style>

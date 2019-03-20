@@ -1,12 +1,11 @@
 <template>
   <div class="con">
       <div class="array">
-        <div class="array-item" v-for="(item,index) in pokers" :key="index">item</div>
+        <div class="array-item" v-for="(item,index) of 9" :key="index"></div>
       </div>
       <div class="poker-box">
-        <!--<poker  v-for="item in myPokers" :pokerDara="item" @touchstart="down" @touchmove="move" @touchend="end" :style="style"></poker>-->
-        <div v-for="(item,index) in myPokers" :key="index" class="try" style="width: 150rpx;height: 150rpx;background: #777812;" @touchstart="down" @touchmove="move($event,index)" @touchend="end(item,index)" :style="style[index]">
-          <div class="arrayPokerShow" :style="{'background':'url('+pokerImg[item.pokerId]+')'}">{{pokerImg[item.pokerId]}}</div>
+        <div v-for="(item,index) in myPokers" :key="index" class="arrayPokerShow" style="width: 150rpx;height: 150rpx;background: #777812;" @touchstart="down" @touchmove="move($event,index)" @touchend="end(item,index)" :style="style[index]">
+          <!-- <div class="arrayPokerShow" :style="{'background':'url('+pokerImg[item.pokerId]+')'}">{{pokerImg[item.pokerId]}}</div> -->
         </div>
       </div>
   </div>
@@ -189,18 +188,6 @@ export default {
         },
 
       ], //拥有的卡牌
-      pokers:[
-         {},
-         {},
-        {},
-        {},
-        {},
-        {},
-        {},
-        {},
-        {},
-      ], //拿来v-for的数组= =
-      list:[1,2,34,5],
       flags: false,
       position: { x: 0, y: 0 },
       nx: '', ny: '', dx: '', dy: '', xPum: '', yPum: '',
@@ -216,6 +203,15 @@ export default {
   },
 
   methods: {
+    initBcakground(){
+      this.style.forEach((item,index)=>{ //background放上去
+        if(item===0){
+          this.style[index] = 'background:url('+this.pokerImg[this.myPokers[index].pokerId]+');'
+        }
+        else
+        this.style[index]+= 'background:url('+this.pokerImg[this.myPokers[index].pokerId]+');'
+      })
+    },
     pokerClass(item){
       console.log('item',item,this.pokerImg[item.pokerId])
 
@@ -235,10 +231,9 @@ export default {
       this.position.y = touch.clientY;
       this.dx = a111.offsetLeft;
       this.dy = a111.offsetTop;
-      
+      console.log('position.x:',this.position.x,'dx:',this.dx)
     },
     move($event,index){
-      console.log('position.x:',this.position.x,'dx:',this.dx)
       let event =$event
       // console.log(event)
       if(this.flags){
@@ -266,7 +261,7 @@ export default {
           this.yPum=0
         } ;
 
-        this.$set(this.style,index,'left:'+this.xPum+'px;'+'top:'+this.yPum+'px;'+'position: absolute;')
+        this.$set(this.style,index,'left:'+this.xPum+'px;'+'top:'+this.yPum+'px;'+'position: absolute;'+'background:url('+this.pokerImg[this.myPokers[index].pokerId]+');')
       }
     },
     end(item,index){
@@ -462,8 +457,11 @@ export default {
       this.flags = false;
       this.position= { x: 0, y: 0 }
       this.nx= '';this.ny= '';this.dx= '';this.dy= '';this.xPum= '';this.yPum= ''
+      this.initBcakground()
     },
     async initStyle(){
+      this.style=[]
+      console.log('ini:',this.style)
       await service.GetMyAll().then(res=>{ //获取我的卡牌
         this.myPokers = pk.toPoker(res.data)
       })
@@ -511,19 +509,22 @@ export default {
           }
         })
       })
+      this.initBcakground()
     }
   },
   watch:{
-    array(newData){
+    array (newData) {
       let data = pk.toDBPoker(newData)
       service.AddMyArray({pokerList:JSON.stringify(data)})
     }
   },
-  async onLoad () {
+  onLoad(){
+        console.log('onshow:',this.style)
+  },
+  async onShow () {
      await this.initStyle();
   },
-  async mounted(){
-    
+  async mounted () {
     console.log(this.myPokers,this.pokerImg[this.myPokers[0].pokerId],this.myPokers[0].pokerId)
   }
 }

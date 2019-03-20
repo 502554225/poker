@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="main">
     <div class="information">
       <div class="img">
         <img src="" alt="" >
@@ -20,10 +20,10 @@
     <div class="AD">
       <div v-if="page==='guanka'" class="guanka">
         <scroll-view scroll-y class="guanka-box">
-          <level  v-for="(item,key) of guanka" :key="key" :num="guanka-key"></level>
+          <level  v-for="(item,key) of guanka" :key="key" :num="guanka-key" @saodang="saodang(num)"></level>
         </scroll-view>
-        当前关卡：{{guanka}}
-        <span @click="start">开始闯关</span>
+        <!-- 当前关卡：{{guanka}}
+        <span @click="start">开始闯关</span> -->
       </div>
       <div v-if="page==='kapai'" class="kapai">
         <div class="kapai-show">
@@ -50,24 +50,17 @@
           </div>
         </scroll-view>
       </div>
-      <div v-if="page==='Draw'" class="drive">
-          <div>
-            <h2 style="font-size:24px">xxx的商店</h2>
-            <div v-if="!isDrive" class="content-box">
-              <div class="one">
-                <span @click="drive1">抽一次</span>
-              </div>
-              <div class="ten">
-                <span @click="drive10">抽十次</span>
-              </div>
-            </div>
-            <div v-if="isDrive" class="drive-body" > 
-              {{driveStatus}}
-              <span @click="drive">
-                点击抽卡
-              </span>
-            </div>
-          </div>          
+      <div v-if="page==='Draw'" class="draw">
+        <h2 style="font-size:24px">xxx的商店</h2>
+        <div v-if="!isDrive" class="content-box">
+          <goods v-for="(item,key) in goodsInfors" :key="key" :goodsInfor="item" @draw="toDraw"></goods>
+        </div>
+        <div v-if="isDrive" class="draw-body" > 
+          <pokerbase v-for="(item,key) of 4" :key="key" check="true"></pokerbase>
+          <!-- <span @click="drive">
+            点击抽卡
+          </span> -->
+        </div>
       </div>
     </div>
       <div class="btn-box">
@@ -76,6 +69,7 @@
         <button size="mini" @click="toArray">我的布阵</button>
         <button size="mini" @click="toDrive">抽牌</button>
       </div>
+      <popup ref="saodang" title="扫荡" type="saodang" :show="popupShow" @confirm="popupConfirm"></popup>
   </div>
 </template>
 
@@ -89,12 +83,17 @@ import service from '../../api/service.js';
 import store from '../../store/store.js';
 import pk from '../../utils/pokersControl.js';
 import level from '@/components/level';
+import goods from '@/components/goods';
+import Infors from '../../utils/goodsInfors.js';
+import popup from '../../components/popup/popup.vue';
 export default {
   components: {
     card,
     groove,
     pokerbase,
-    level
+    level,
+    goods,
+    popup
   },
   // computed:{
   //   showPoker(){
@@ -116,6 +115,8 @@ export default {
       driveStatus:'未抽卡',
       choosePokerIndex:'',
       showPoker:[],
+      goodsInfors:Infors,
+      popupShow:false
     }
   },
   
@@ -123,6 +124,15 @@ export default {
     this.init()
   },
   methods:{
+    popupConfirm(){
+      this.popupShow = false
+      // 实现扫荡  popup 样式还有问题
+    },
+    saodang(num){
+      console.log('dianwole ')
+      this.popupShow = true
+      this.$refs.saodang.saodangLevel = num
+    },
     choosePoker(poker){
       // this.$children
       this.pokers.forEach(item => {
@@ -159,22 +169,10 @@ export default {
     toDrive(){
       this.page = 'Draw'
     },
-    drive1(){
+    toDraw(){
       this.isDrive = true
     },
-    async drive(){
-      this.driveStatus = '已抽卡';
-      let len
-      await service.GetAll().then(res=>{
-        len = res.data.length
-      })
-      let pokerid = Math.floor(Math.random()*len).toString()
-      service.AddMyPoker({pokerId:pokerid}).then(res=>{
-        if(res.data.length>0){
-          //出现抽出的卡牌
-        }
-      }) 
-    },
+   
     start(){
        wx.navigateTo({
         url:'/pages/guanka/main'
@@ -199,6 +197,9 @@ export default {
 </script>
 
 <style scoped>
+.main{
+  position: relative;
+}
 .information{
   display: flex;
   height: 150rpx;
@@ -259,13 +260,31 @@ img{
 .kapai-box2 .poker-base{
   margin-top: 10rpx
 }
-.content-box{
+.draw{
   display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+}
+.content-box{
+  box-sizing: border-box;
+  flex:auto;
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  padding: 20rpx;
+  /* padding-right: 20rpx; */
 }
 .content-box div{
   flex:auto
 }
-.drive-body{
+.draw-body{
+  flex:auto;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20rpx;
   background: blue
 }
 .showData-body{
