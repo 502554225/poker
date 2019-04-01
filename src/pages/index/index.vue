@@ -22,6 +22,7 @@
 import card from '@/components/card'
 import store from '../../store/store.js'
 import service from '../../api/login.js'
+import { userInfo } from 'os';
 
 export default {
   data () {
@@ -38,7 +39,7 @@ export default {
   methods: {
     bindViewTap () {
       const url = '../logs/main'
-      wx.navigateTo({ url })
+      wx.redirectTo({ url })
     },
     getUserInfo () {
       // 调用登录接口
@@ -48,6 +49,7 @@ export default {
           wx.getUserInfo({
             success: (res) => {
               this.userInfo = res.userInfo
+              store.commit('setUserInfor',this.userInfo)
               var globalData = store.state.globalData
               
               wx.request({

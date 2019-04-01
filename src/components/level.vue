@@ -5,13 +5,14 @@
                 <div>第{{num}}关：名字</div>
                 <div class="levelBtn">
                     <div @click="toGuanka">开始闯关</div>
-                    <div @click="saodang">扫荡关卡</div>
+                    <div v-if="saodangShow" @click="saodang">扫荡关卡</div>
                 </div>
             </div>
         </div>
 </template>
 <script>
 import store from '../store/store.js';
+import service from '../api/service.js';
 export default {
     props:{
         levelInfor:{
@@ -28,8 +29,17 @@ export default {
 
         }
     },
+    computed:{
+        saodangShow(){
+            return store.state.myInfor.levelG>this.num
+        }
+    },
     methods:{
         toGuanka(){
+            let myInfor = store.state.myInfor
+            myInfor.fatigueNum -=5
+            store.commit('setMyInfor',myInfor)
+            service.SaveMyInfor({'infor':JSON.stringify(myInfor)})
             wx.navigateTo({
                 url:`/pages/guanka/main?num=${this.num}`
             })

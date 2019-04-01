@@ -1,29 +1,19 @@
 <template>
   <div class="main">
     <div class="information">
-      <div class="img">
-        <img src="" alt="" >
+      <div class="myInfor">
+        <img class="myInfor-img" :src="userInfor.avatarUrl" background-size="cover">
+        <div class="name">{{userInfor.nickName}}</div>
       </div>
       <div class="inf-body">
-        <div>
-            <h5>体</h5>
-            <groove width="100%" height="40rpx"></groove>
-        </div>
-        <div>
-            <h5>金</h5>
-        </div>
-        <div>
-            <h5>经</h5>
-        </div>
+        <groove v-for="(item,key) in grooveList" :key="key" width="100%" height="50rpx" :info="item"></groove>
       </div>
     </div>
     <div class="AD">
       <div v-if="page==='guanka'" class="guanka">
         <scroll-view scroll-y class="guanka-box">
-          <level  v-for="(item,key) of guanka" :key="key" :num="guanka-key" @saodang="saodang(num)"></level>
+          <level  v-for="(item,key) of guanka" :key="key" :num="guanka-key" @saodang="saodang"></level>
         </scroll-view>
-        <!-- 当前关卡：{{guanka}}
-        <span @click="start">开始闯关</span> -->
       </div>
       <div v-if="page==='kapai'" class="kapai">
         <div class="kapai-show">
@@ -38,28 +28,32 @@
               <div>韧劲：{{showPoker.indomitableness}}</div>
               <div>命中：{{showPoker.hit}}</div>
               <div>闪避：{{showPoker.evade}}</div>
+              <div>等级：{{showPoker.level}}</div>
               <div>技能：{{showPoker.skill}}</div>
             </div>
           </div>
         </div>
         <scroll-view scroll-y class="kapai-box">
           <div class="kapai-box2">
-            <pokerbase  v-for="(poker,key) in pokers" :key="key"  :pokerData="poker" marginBottom="10" @choosePoker="choosePoker" >
+            <pokerbase  v-for="(poker,key) in pokers" :key="key"  :pokerData="poker" marginBottom="10" @choosePoker="choosePoker" width="181">
               {{poker.name}}   
             </pokerbase> 
           </div>
         </scroll-view>
       </div>
       <div v-if="page==='Draw'" class="draw">
-        <h2 style="font-size:24px">xxx的商店</h2>
+        <h2 style="font-size:24px;text-align:center">xxx的商店</h2>
         <div v-if="!isDrive" class="content-box">
           <goods v-for="(item,key) in goodsInfors" :key="key" :goodsInfor="item" @draw="toDraw"></goods>
         </div>
         <div v-if="isDrive" class="draw-body" > 
-          <pokerbase v-for="(item,key) of 4" :key="key" check="true"></pokerbase>
-          <!-- <span @click="drive">
-            点击抽卡
-          </span> -->
+          <div class="draw-box">
+            <pokerbase v-for="(item,key) of 4" :key="key" check="true" @pokerFull="drawPopup = true" @addPoker="drawBtn = true" :isInit="drawInit"></pokerbase>
+          </div>
+          <div v-if="drawBtn" class="drawBtn-box">
+            <button @click="drawAgain" size="mini">再抽一次</button>
+            <button @click="drawOver" size="mini" style="margin-left:20rpx">确定</button>
+          </div>
         </div>
       </div>
     </div>
@@ -69,7 +63,10 @@
         <button size="mini" @click="toArray">我的布阵</button>
         <button size="mini" @click="toDrive">抽牌</button>
       </div>
-      <popup ref="saodang" title="扫荡" type="saodang" :show="popupShow" @confirm="popupConfirm"></popup>
+      <popup ref="saodang" title="扫荡" type="saodang" :show="popupShow" @confirm="popupConfirm" @success="successPopup = true" @fail="failPopup = true"></popup>
+      <popup title="提示" words="扫荡成功！" :show="successPopup" @confirm="popupConfirm"></popup>
+      <popup title="提示" words="体力不足！" :show="failPopup" @confirm="popupConfirm"></popup>
+      <popup title="提示" words="你已获取所有卡牌！" :show="drawPopup" :to="{page:'logs'}"  @confirm="popupConfirm"></popup>
   </div>
 </template>
 
@@ -87,7 +84,7 @@ import goods from '@/components/goods';
 import Infors from '../../utils/goodsInfors.js';
 import popup from '../../components/popup/popup.vue';
 export default {
-  components: {
+  components: {   
     card,
     groove,
     pokerbase,
@@ -95,16 +92,6 @@ export default {
     goods,
     popup
   },
-  // computed:{
-  //   showPoker(){
-  //     console.log('wojinlailalaaaal')
-  //     return function(){
-  //       this.pokers.forEach(item=>{
-  //         if(item.isChoose) return item
-  //       })
-  //     }
-  //   }
-  // },
   data () {
     return {
       page:'guanka',
@@ -116,25 +103,72 @@ export default {
       choosePokerIndex:'',
       showPoker:[],
       goodsInfors:Infors,
-      popupShow:false
+      popupShow:false, //扫荡弹窗
+      failPopup:false, //扫荡失败弹窗
+      successPopup:false, //扫荡成功弹窗
+      drawPopup:false, //抽满卡牌弹窗
+      drawBtn:false, //抽卡成功后按钮,
+      drawInit:false,
+      userInfor:{
+        avatarUrl:'',
+        nickName:''
+      },
+      grooveList:[
+        {
+          font:'体力',
+          src:'../../../static/img/back-face-pattern.png',
+          num:0
+        },
+        {
+          font:'金币',
+          src:'../../../static/img/back-face-pattern.png',
+          num:0
+        },
+        {
+          font:'抽卡',
+          src:'../../../static/img/back-face-pattern.png',
+          num:0
+        },
+      ]
     }
   },
-  
+  onLoad(){
+    service.UpMyInfor()
+    this.backstage()
+  },
   onShow(){
     this.init()
   },
   methods:{
-    popupConfirm(){
+    drawAgain(){
+      console.log('jinle')
+      this.drawPopup = false
+      this.drawBtn = false 
+      this.drawInit = true
+    },
+    drawOver(){
+      this.drawAgain()
+      wx.redirectTo({
+        url:'/pages/logs/main'
+      })
+    },
+    popupConfirm(str){ //弹窗确认按钮
+      console.log(str)    
       this.popupShow = false
-      // 实现扫荡  popup 样式还有问题
+      this.successPopup = false
+      this.failPopup = false
+      this.drawPopup = false
+      if(str === 'saodang'){
+        this.$refs.saodang.saodang()
+      }
+      // 实现扫荡 
     },
     saodang(num){
-      console.log('dianwole ')
+      console.log(num )
       this.popupShow = true
       this.$refs.saodang.saodangLevel = num
     },
     choosePoker(poker){
-      // this.$children
       this.pokers.forEach(item => {
         if(item == poker){
           item.isChoose = true
@@ -142,8 +176,7 @@ export default {
         }
         else item.isChoose = false
       });
-      // console.log('sichup;l:',poker)
-      // this.choosePokerIndex = poker
+
     },
     toGuanka(){
       this.page = 'guanka'
@@ -178,21 +211,41 @@ export default {
         url:'/pages/guanka/main'
       }) 
     },
+    backstage(){
+      setInterval(function(){
+        service.UpMyInfor()
+      },300000)
+    },
     async init(){
       this.page='guanka'
       this.logs= []
-      this.guanka=111
       this.isDrive=false
       this.pokers=[]
+      this.userInfor = {...store.state.userInfor}
       await service.GetMyInfor().then(res=>{ 
         store.commit('setMyInfor',res.data)
       })
+      let grooveList = this.grooveList
+      grooveList[0].num = store.state.myInfor.fatigueNum;
+      grooveList[1].num = store.state.myInfor.gold;
+      grooveList[2].num = store.state.myInfor.drawNum;
+      this.grooveList= grooveList
       console.log('store:',store.state.myInfor)
       this.guanka=store.state.myInfor.levelG
     }
 
+  },
+  watch:{
+    // userInfor:{
+    //         deep:true,
+    //         handler(data){ 
+    //           console.log('wacth :',data)
+    //                 this.userInfor = data
+    //         },
+    //         immediate: true,
+            
+    //     }   
   }
-  
 }
 </script>
 
@@ -202,31 +255,43 @@ export default {
 }
 .information{
   display: flex;
-  height: 150rpx;
+  height: 180rpx;
   width: 100%;
   margin-top: 20rpx;
 }
-img{
-  margin-left: 10rpx;
-  width: 150rpx;
-  height: 150rpx;
+.myInfor{
+  margin-left: 40rpx;
+  width: 140rpx;
+  height: 180rpx;
+}
+.myInfor-img{
+  width: 140rpx;
+  height: 140rpx;
   border-radius: 50%;
-  background: #bbb
+}
+.name{
+  width: 140rpx;
+  height: 40rpx;
+  font-size: 19px;
+  line-height: 40rpx;
+  text-align: center;
 }
 .inf-body{
   display: flex;
   flex-direction: column;
-  margin-left: 50rpx;
-  margin-right: 50rpx;
+  justify-content: space-around;
+  width: 300rpx;
+  margin-left: 100rpx;
+  margin-right: 100rpx;
   flex: auto;
 }
-.inf-body div{
+/* .inf-body div{
   width: 100%;
   flex: auto;
   display: flex;
-}
+} */
 .AD{
-  margin-top: 50rpx;
+  margin-top: 30rpx;
   width: 745rpx;
   height: 849rpx;
   background: #bbb;
@@ -254,7 +319,7 @@ img{
 }
 .kapai-box2{
   display: flex;
-  justify-content: space-between;
+  /* justify-content: space-between; */
   flex-wrap: wrap;
 }
 .kapai-box2 .poker-base{
@@ -282,21 +347,32 @@ img{
   flex:auto;
   box-sizing: border-box;
   display: flex;
+  flex-direction: column;
   justify-content: space-between;
   align-items: center;
-  padding: 20rpx;
+  padding: 100rpx 5rpx 100rpx 5rpx;
   background: blue
 }
+.draw-box{
+  display: flex;
+  justify-content: space-between
+}
+.showData-title{
+  text-align: center;
+  font-size: 20px;
+}
 .showData-body{
-  width: 500rpx;
+  width: 480rpx;
+  margin-left: 20rpx;
+  flex: auto;
   display: flex;
   flex-wrap: wrap;
 }
 .showData-body div{
-  flex: auto;
+  /* margin-left: 30rpx; */
   width: 50%;
   height: 25%;
-  font-size: 12px;
+  font-size: 16px;
 }
 .guanka{
   width: 100%;

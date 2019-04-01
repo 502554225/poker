@@ -1,9 +1,14 @@
 <template >
     <div v-if="show" class="popup">
-        <div class="popup-title">{{title}} </div>
         <div class="popup-body">
+            <div class="popup-title">{{title}} </div>
             <h4 v-if="type === 'words'">{{words}}</h4>
             <counter v-if="type === 'saodang'" ref="counter"></counter>
+            <div class="reward" v-if="reward.isShow">
+                <div>经验：{{reward.numList[0]}}</div>
+                <div>金币：{{reward.numList[1]}}</div>
+                <div>符咒：{{reward.numList[2]}}</div>
+            </div>
             <button size="mini" @click="confirm">确定</button>
         </div>
     </div>
@@ -13,6 +18,7 @@ import counter from '../counter/counter';
 import service from '../../api/service.js';
 import pk from '../../utils/pokersControl.js';
 import levelList from '../../utils/levelList.js';
+import store from '../../store/store.js';
 export default {
     name:'popup',
     data(){
@@ -24,6 +30,13 @@ export default {
         counter
     },
     props:{
+        reward:{
+            type:Object,
+            default:{
+                isShow:false,
+                numList:[0,0,0]
+            }
+        },
         type:{
             type:String,
             default:'words'
@@ -48,22 +61,41 @@ export default {
     methods:{
         confirm(){
             if(this.to){  
+                this.$emit('confirm')
                  wx.redirectTo({
                     url:`/pages/${this.to.page}/main`
                 })
             }
             else{
-                this.$emit('confirm')
+                if(this.type === 'words'){this.$emit('confirm','close')}
+                if(this.type === 'saodang'){
+                        console.log('type:',this.type)
+                        this.$emit('confirm','saodang')
+                    }
             }
+
         },
         async saodang(){
-            let myArray
+            console.log('saodang')
+            let myArray,myInfor
             let levelG = levelList[this.saodangLevel-1].level
-            // await service.GetMyArray().then(res=>{
-            //    myArray = pk.computed(pk.toPoker(res.data))
-            // })
             let num = this.$refs.counter.count
-            await service.AddLevel({level:levelG*num})
+            myInfor = store.state.myInfor
+            if(myInfor.fatigueNum<num*5){
+                //提示
+                let obj={}
+                obj.title = '提示'
+                obj.words = '体力不足！'
+                obj.type = 'words'
+                this.$emit('fail')
+            }
+            else{
+                myInfor.fatigueNum-=num*5
+                store.commit('setMyInfor',myInfor)
+                await service.SaveMyInfor({infor:JSON.stringify(myInfor)})
+                await service.AddLevel({level:levelG*num})
+                this.$emit('success')
+            }
         }
     }
 }
@@ -87,7 +119,8 @@ export default {
         background: #fff
     }
     .popup-body{
-        width: 100%;
+        width: 500rpx;
+        height: 100%;
         display: flex;
         flex-direction: column;
         justify-content: space-between;
@@ -98,5 +131,9 @@ export default {
         margin-left: auto;
         margin-right: auto;
         margin-bottom: 10rpx;
+    }
+    .reward{
+        display: flex;
+        justify-content: space-around;
     }
 </style>

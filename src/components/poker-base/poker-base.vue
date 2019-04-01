@@ -8,7 +8,12 @@
 <script>
 import service from '../../api/service.js';
 export default {
+    name:'pokerbase',
     props:{
+        isInit:{
+            type:Boolean,
+            default:false
+        },
         marginBottom:{
             type:Number,
             default:0
@@ -51,11 +56,7 @@ export default {
         //     default:false
         // }
     },
-    // computed:{
-    //     isChoose(){
-    //        return this.pokerData.isChoose 
-    //     }
-    // },
+
     data(){
         return{
             src:'../../../static/img/battle-bg.png',
@@ -68,40 +69,47 @@ export default {
     },
     methods:{
          async drive(){
-            let len
             let allPokers
+            let drawPokers=[]
             await service.GetAll().then(res=>{
-                len = res.data.length
                 allPokers = res.data
             })
-            let pokerid = Math.floor(Math.random()*len).toString()
-            await service.GetMyAll().then(res=>{
-                if(allPokers === res.data){
-                    this.$emit('popup')// 弹窗提示 抽满了
-                    return
-                }
-                res.data.forEach(item=>{
-                if(item.pokerId === pokerid){
-                    this.drive()
-                    return
-                }
-                })
+            await service.GetMyAll().then(res=>{   
+                
+                 allPokers.forEach(item=>{
+                   if(res.data.every(item2=>{
+                        return item2.pokerId !==item.pokerId
+                    })) {
+                        drawPokers.push(item.pokerId)
+                    }
+                }) 
+                
             })
-            service.AddMyPoker({pokerId:pokerid}).then(res=>{
-                if(res.data.length>0){
-                //出现抽出的卡牌
-                }
-            }) 
+            console.log('drawPokers:',drawPokers)
+            if(drawPokers.length === 0){
+                this.$emit('pokerFull')// 弹窗提示 抽满了
+            }
+            else{
+                let len = drawPokers.length
+                let pokerid = drawPokers[Math.floor(Math.random()*len)]
+                console.log(pokerid)
+                service.AddMyPoker({pokerId:pokerid}).then(res=>{
+                    //选中卡牌 后续 出现按钮 （再来一次 确定）
+                        this.$emit('addPoker')
+                }) 
+            }
+           
         },
         choosePoker(){
             console.log('poker:',this.pokerData)
             this.$emit('choosePoker',this.pokerData)
             if(this.check){
                 this.$set(this,'isCheck',true)
-
+                this.drive()
             }
         },
         init(){
+            this.isCheck = false
             if(this.pokerData){
                 this.src = '../../../static/img/battle-bg.png'  //未填写poker的src 这是默认的
             }
@@ -111,6 +119,14 @@ export default {
         }
     },
     watch:{
+        isInit:{  //监听不到props
+            immediate: true,        
+            handler (val) {
+                console.log(this.isInit)
+                if(this.isInit) this.init()
+            }
+        },
+
         // 'pokerData.isChoose':{
         //     deep:true,
         //     handler(data){ 

@@ -33,4 +33,7 @@ service.SaveMyInfor=async function(data){
 service.AddLevel=async function(data){
     return request.post('Poker/AddLevel',data)
 }
+service.UpMyInfor=async function(data){
+    return request.post('Poker/UpMyInfor',data)
+}
 export default service

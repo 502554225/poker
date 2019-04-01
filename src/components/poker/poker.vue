@@ -3,7 +3,7 @@
   @import "lifeAnimaion.css";
 </style>
 <template>
-    <div v-if="pokerData" class="poker" :class="[positionClass,pokerData.action,test]" @click="change">
+    <div v-if="pokerData.survival === 1" class="poker" :class="[positionClass,pokerData.action,test]" @click="change">
       <div class="life-vigour-box">
         <div class="life-box">
           <div class="life" :class="'life'+(pokerData.life-pokerData.life%10)"></div>

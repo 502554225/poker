@@ -4,7 +4,7 @@
       <poker v-for="(item,index) in opponent" :key="index" :pokerData="item"></poker>
       <poker v-for="(item,index) in my" :key="index" :pokerData="item"></poker>
     </div>
-    <popup :title="success ? '成功' : '失败'" :words="success ? '你已消灭所有敌人' : '还差那么一点点'" :to="{page:'logs'}" :show="popupShow"></popup>
+    <popup :title="success ? '成功' : '失败'" :reward="rewardShow" :words="success ? '你已消灭所有敌人' : '还差那么一点点'" :to="{page:'logs'}" :show="popupShow" @confirm="confirm"></popup>
   </div>
 </template>)
 
@@ -33,27 +33,37 @@ export default {
       success:'111',
       guanka:0,
       c:0,
-      popupShow:false
+      popupShow:false,
+      rewardShow:{
+        isShow:false,
+        numList:[0,0,0]
+      }
     }
   },
   computed:{
 
   },
   methods: {
+    confirm(){
+      console.log('confirm')
+      this.popupShow = false;
+      clearInterval(this.c);      
+    },
     upDataOrder(){//更新攻击顺序,根据对方存活卡牌，依据X,Y坐标生成进攻顺序
       console.log('更新进攻顺序')
+      console.log('op:',this.opponent)
+      this.isGameOver()
       this.myOrder=[[],[],[]]
       this.opOrder=[[],[],[]]
       for (let y=3;y>0;y--){
         for(let x=1;x<4;x++){
           this.opponent.forEach((item,index)=>{
-            if ((item.position.x===x)&&(item.position.y===y)){
-              // console.log(x,y)
+            if ((item.position.x===x)&&(item.position.y===y)&&item.survival){
               this.myOrder[0].push(index)
             }
           })
           this.my.forEach((item,index)=>{
-            if ((item.position.x===x)&&(item.position.y===y)){
+            if ((item.position.x===x)&&(item.position.y===y)&&item.survival){
               this.opOrder[0].push(index)
             }
           })
@@ -62,12 +72,12 @@ export default {
       for (let y of [2,3,1]){
         for(let x=1;x<4;x++){
           this.opponent.forEach((item,index)=>{
-            if (item.position.x===x&&item.position.y===y){
+            if (item.position.x===x&&item.position.y===y&&item.survival){
               this.myOrder[1].push(index)
             }
           })
           this.my.forEach((item,index)=>{
-            if (item.position.x===x&&item.position.y===y){
+            if (item.position.x===x&&item.position.y===y&&item.survival){
               this.opOrder[1].push(index)
             }
           })
@@ -76,12 +86,12 @@ export default {
       for (let y of [1,3,2]){
         for(let x=1;x<4;x++){
           this.opponent.forEach((item,index)=>{
-            if (item.position.x===x&&item.position.y===y){
+            if (item.position.x===x&&item.position.y===y&&item.survival){
               this.myOrder[2].push(index)
             }
           })
           this.my.forEach((item,index)=>{
-            if (item.position.x===x&&item.position.y===y){
+            if (item.position.x===x&&item.position.y===y&&item.survival){
               this.opOrder[2].push(index)
             }
           })
@@ -98,56 +108,62 @@ export default {
       let index = 0;
       let vm=this
       let time =0
-      this.c= setInterval(async function() {
-           if ((index>=(vm.my.length))&&(index>=(vm.opponent.length))){ //终止本回合
-             console.log('终止本回合:index:',index,'mylength:',vm.my.length,'oplength:',vm.opponent.length)
-             vm.my.forEach(item=>{
+      this.c= setInterval(async ()=> {   
+           if ((index>=(this.my.length))&&(index>=(this.opponent.length))){ //终止本回合
+             console.log('终止本回合:index:',index)
+             this.my.forEach(item=>{
                item.action=''
              })
-             vm.opponent.forEach(item=>{
+             this.opponent.forEach(item=>{
                item.action=''
              })
-             clearInterval(vm.c)
-             vm.upDataOrder()
-            //  console.log(vm.my,vm.opponent)
-            //  console.log('length',vm.my.length,vm.opponent.length)
-             if ((vm.my.length!==0)&&(vm.opponent.length!==0)){ //双方是否还有卡牌存在，是则开启下一回合
-               vm.roundStart()
+             clearInterval(this.c)
+             this.upDataOrder()
+             let MY = this.my.some((item)=>{ //有任意一张存在则返回true 
+               return item.survival === 1
+             })
+             let OP = this.opponent.some((item)=>{ 
+               return item.survival === 1
+              })
+             if (MY&&OP){ //双方是否还有卡牌存在，是则开启下一回合
+                console.log('开始下一回合')
+               this.roundStart()
              }
            }  
           console.log('每方的第',index+1,'张卡牌出战')
-         if (vm.my[index]) { //我方
-           let item = vm.myOrder[vm.my[index].position.y-1].find(item=>{ //根据index找到第一个符合条件的进攻对象
-              return vm.opponent[item]
+         if (this.my[index].survival === 1) { //我方
+           let item = this.myOrder[this.my[index].position.y-1].find(item=>{ //根据index找到第一个符合条件的进攻对象
+              return this.opponent[item]
            })
            console.log(item)
-          await vm.myAttack(index,item)
-           console.log('我方',vm.my[index].position.x,",",vm.my[index].position.y,'进攻',vm.opponent[item].position.x,',',vm.opponent[item].position.y,'完毕')
+          await this.myAttack(index,item)
+           console.log('我方',this.my[index].position.x,",",this.my[index].position.y,'进攻',this.opponent[item].position.x,',',this.opponent[item].position.y,'完毕')
          }
 
-          vm.isGameOver()
-         if (vm.opponent[index]) { //敌方
+          this.isGameOver()
+         if (this.opponent[index].survival === 1) { //敌方
+         console.log('oooo:',this.opponent[index])
            setTimeout(await function() {
-              let item = vm.opOrder[vm.opponent[index].position.y-1].find(item=>{
-                 return vm.my[item]
+              let item = this.opOrder[this.opponent[index].position.y-1].find(item=>{
+                 return this.my[item]
                })
-             vm.opAttack(index,item)
-             console.log('敌方',vm.opponent[index].position.x,",",vm.opponent[index].position.y,'进攻',vm.my[item].position.x,',',vm.my[item].position.y,'完毕')
+             this.opAttack(index,item)
+             console.log('敌方',this.opponent[index].position.x,",",this.opponent[index].position.y,'进攻',this.my[item].position.x,',',this.my[item].position.y,'完毕')
 
-           },1200)
+           }.bind(this),1200)
          }
 
          setTimeout(await function() {
-           if (!vm.opponent[index]) {
+           if (!this.opponent[index]) {
              time = 1200;
            }
            else{
              time =0;
            }
-            vm.isGameOver()
+            this.isGameOver()
           
            index++
-         },1200)
+         }.bind(this),1200)
      },(2400-time))
       this.$once('hook:onUnload', () => {         //返回时关闭定时器   
           clearInterval(this.c);                                    
@@ -155,8 +171,14 @@ export default {
     },
     async isGameOver(){ 
       let vm = this
-      if (vm.my.length===0||vm.opponent.length===0){ //如果一方牌全军覆没则结束对战
-        if(vm.my.length===0) {
+      let MY = this.my.every((item)=>{ //所有不存在则返回true 
+        return item.survival === 0
+      })
+      let OP = this.opponent.every((item)=>{ 
+        return item.survival === 0
+      })
+      if (MY||OP){ //如果一方牌全军覆没则结束对战
+        if(MY) {
           vm.$set(vm,'success',false)
           this.popupShow = true
         }
@@ -164,12 +186,23 @@ export default {
           vm.$set(vm,'success',true)
           this.popupShow = true
           let myInfor = store.state.myInfor
-          await service.AddLevel({level:levelList[myInfor.levelG-1].level})
-          console.log(myInfor.levelG,';;;',this.guanka)
+          let level = levelList[myInfor.levelG-1] //计算对应关卡的经验
+          await service.AddLevel({level:level.level})
+          this.rewardShow.isShow = true
+          this.rewardShow.numList[0] = level.level
+          await service.GetMyArray().then(res=>{
+            res.data.forEach(item=>{
+              item.level += level.level
+            })
+            service.AddMyArray({pokerList:JSON.stringify(res.data)})
+          })
+          
           if(myInfor.levelG<=this.guanka){
             myInfor.drawNum+=levelList[myInfor.levelG-1].drawNum
             myInfor.gold+=levelList[myInfor.levelG-1].gold
             myInfor.levelG++ 
+            this.rewardShow.numList[1] = level.gold
+            this.rewardShow.numList[2] = level.drawNum
             await service.SaveMyInfor({'infor':JSON.stringify(myInfor)}) //更新关卡
           }
         }
@@ -198,13 +231,10 @@ export default {
     async opAttack(num1,num2){
       let vm =this
       let action =  this.opponent[num1].action
-      console.log('前class:',action)
       if (vm.opponent[num1].vigour>=100){
-        // console.log('>100<')
         this.skill('my',num1,num2,this.opponent[num1].skill)
       }
       else {
-        // this.$set(this.opponent[num1], 'action', "op-atc-" + vm.my[num2].position.x + '-' + vm.my[num2].position.y)
        this.opponent[num1].action = "op-atc-" + vm.my[num2].position.x + '-' + vm.my[num2].position.y
        console.log('后class:',this.opponent[num1].action)
         setTimeout(await function() {
@@ -240,49 +270,29 @@ export default {
           // console.log('闪避')
           if (str==='my'){ //伤害反馈到界面
               this.$set(this.my[num2],'isEvade',true)
-              // let vm=this;
-              // setTimeout(function() {
-              //   vm.$set(this.my[num2],'isEvade',false)
-              // },450)
           }
           if (str==='op'){ //伤害反馈到界面
               this.$set(this.opponent[num2],'isEvade',true)
-              // let vm=this;
-              // setTimeout(function() {
-              //   vm.$set(this.opponent[num2],'isEvade',false)
-              // },450)
           }
-          // if (str ==='op') {
-          //   if (damage!==0){
-          //     let life = this.opponent[num2].life-damage;
-          //     this.$set(this.opponent[num2],'life',life)
-          //     if (this.opponent[num2].life<=0){
-          //       this.opponent.splice(num2,1)
-          //       // this.$set(this,'my',this.opponent)
-          //       this.upDataOrder()
-          //     } ;
-          //   }
-          // }
           return
         }
         else {
 
           if (Math.random()>=crits){ //如果为暴击则伤害倍数为1
             doubleDamage =1;
-            // console.log('没暴击')
           }
           damage = (aggressivity1)*doubleDamage*x-defenses2;
           if(damage<=0) damage = 1
         // }
-      }
+        }
 
-      if (str==='my'){ //伤害反馈到界面
+      if (str==='my'){ //数值计算
         if (damage!==0){
           let life = this.my[num2].life-damage;
           this.$set(this.my[num2],'life',life)
           if (this.my[num2].life<=0){
-            this.my.splice(num2,1)
-            // this.$set(this,'my',this.my)
+            // this.my.splice(num2,1)
+            this.my[num2].survival = 0;
             this.upDataOrder()
           }
         }
@@ -292,8 +302,8 @@ export default {
           let life = this.opponent[num2].life-damage;
           this.$set(this.opponent[num2],'life',life)
           if (this.opponent[num2].life<=0){
-            this.opponent.splice(num2,1)
-            // this.$set(this,'my',this.opponent)
+            // this.opponent.splice(num2,1)
+            this.opponent[num2].survival = 0;
             this.upDataOrder()
           } ;
         }
@@ -306,7 +316,6 @@ export default {
     },
     async init(levelG){
       this.userInfo= {}
-      // let levelG = store.state.myInfor.levelG
       let opponent 
       let my
       await service.ToArray({'opList':JSON.stringify(opList[levelG-1])}).then(res=>{
@@ -314,16 +323,19 @@ export default {
       })  
       opponent.forEach(item=>{
         item.isEvade = false
+        item.survival = 1
       })
       this.opponent = opponent
       this.myOrder=[[],[],[]]
       this.opOrder=[[],[],[]]
       this.success='111'
+      this.popupShow=false
       await service.GetMyArray().then(res=>{
         my = pk.computed(pk.toPoker(res.data))
       })
       my.forEach(item=>{
-        item.isEvade = false
+        item.isEvade = false //是否闪避
+        item.survival = 1
       })
       this.my = my
       // let mypk = []
@@ -338,7 +350,6 @@ export default {
             min = this.my[i]
             this.my[i] = this.my[i-1]
             this.my[i-1] = min
-            console.log('my:',this.my)
             return this.my
           }
         }
@@ -358,11 +369,10 @@ export default {
   },
   onUnload(){
     console.log('onUnload')
-    console.log(this.roundStart())
+    clearInterval(this.c)
     wx.redirectTo({
       url: '/pages/logs/main'
     })
-    // clearInterval(this.roundStart().c)
   }
 }
 </script>

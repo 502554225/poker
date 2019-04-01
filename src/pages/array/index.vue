@@ -3,9 +3,10 @@
       <div class="array">
         <div class="array-item" v-for="(item,index) of 9" :key="index"></div>
       </div>
-      <div class="poker-box">
-        <div v-for="(item,index) in myPokers" :key="index" class="arrayPokerShow" style="width: 150rpx;height: 150rpx;background: #777812;" @touchstart="down" @touchmove="move($event,index)" @touchend="end(item,index)" :style="style[index]">
-          <!-- <div class="arrayPokerShow" :style="{'background':'url('+pokerImg[item.pokerId]+')'}">{{pokerImg[item.pokerId]}}</div> -->
+      <div class="myPoker">
+        <div class="myPoker-font">我的卡牌</div>
+        <div scroll-y class="poker-box">
+          <div v-for="(item,index) in myPokers" :key="index" class="arrayPokerShow" style="width: 130rpx;height: 195rpx;background: #777812;" @touchstart="down" @touchmove="move($event,index)" @touchend="end(item,index)" :style="style[index]"></div>
         </div>
       </div>
   </div>
@@ -18,6 +19,7 @@ import service from '../../api/service';
 import pk from '../../utils/pokersControl.js';
 import pokerbase from '@/components/poker-base/poker-base';
 import imgList from '../../utils/imgSrc.js';
+import store from '../../store/store.js';
 export default {
   name:'1',
   data () {
@@ -285,8 +287,8 @@ export default {
             this.yPum=10000
           }
           else {
-            this.xPum=75;
-            this.yPum=75
+            this.xPum=60;
+            this.yPum=27
             item.position.x = 1;
             item.position.y = 1
             this.array.push(item)
@@ -303,14 +305,14 @@ export default {
             this.yPum=10000
           }
           else {
-            this.xPum = 75;
-            this.yPum = 325
+            this.xPum = 60;
+            this.yPum = 277
             item.position.x = 2;
             item.position.y = 1
             this.array.push(item)
           }
         }
-        else if (this.yPum<=370) {
+        else if (this.yPum<=300) {
           let res
           this.array.forEach(i => {
             if ((i.position.x===3)&&(i.position.y===1)) {
@@ -321,13 +323,13 @@ export default {
             this.yPum=10000
           }
           else {
-            this.xPum=75;
-            this.yPum=575
+            this.xPum=60;
+            this.yPum=527
             item.position.x = 3;
             item.position.y = 1
             this.array.push(item)
           }
-        }
+        } 
         else {
           this.yPum=10000
         }
@@ -344,8 +346,8 @@ export default {
             this.yPum=10000
           }
           else {
-            this.xPum = 325;
-            this.yPum = 75
+            this.xPum = 307;
+            this.yPum = 27
             item.position.x = 1;
             item.position.y = 2
             this.array.push(item)
@@ -362,14 +364,14 @@ export default {
             this.yPum=10000
           }
           else {
-            this.xPum = 325;
-            this.yPum = 325
+            this.xPum = 307;
+            this.yPum = 277
             item.position.x = 2;
             item.position.y = 2
             this.array.push(item)
           }
         }
-        else if (this.yPum<=370) {
+        else if (this.yPum<=300) {
           let res
           this.array.forEach(i => {
             if ((i.position.x===3)&&(i.position.y===2)) {
@@ -380,8 +382,8 @@ export default {
             this.yPum=10000
           }
           else {
-            this.xPum = 325;
-            this.yPum = 575
+            this.xPum = 307;
+            this.yPum = 527
             item.position.x = 3;
             item.position.y = 2
             this.array.push(item)
@@ -401,8 +403,8 @@ export default {
             this.yPum=10000
           }
           else {
-            this.xPum=575;
-            this.yPum=75
+            this.xPum=560;
+            this.yPum=27
             item.position.x = 1;
             item.position.y = 3
             this.array.push(item)
@@ -419,14 +421,14 @@ export default {
             this.yPum=10000
           }
           else {
-            this.xPum = 575;
-            this.yPum = 325
+            this.xPum = 560;
+            this.yPum = 277
             item.position.x = 2;
             item.position.y = 3
             this.array.push(item)
           }
         }
-        else if (this.yPum<=370) {
+        else if (this.yPum<=300) {
           let res
           this.array.forEach(i => {
             if ((i.position.x===3)&&(i.position.y===3)) {
@@ -437,8 +439,8 @@ export default {
             this.yPum=10000
           }
           else {
-            this.xPum = 575;
-            this.yPum = 575
+            this.xPum = 560;
+            this.yPum = 527
             item.position.x = 3;
             item.position.y = 3
             this.array.push(item)
@@ -475,35 +477,35 @@ export default {
           if(pkItem.pokerId == arItem.pokerId){
             if(arItem.position.x == 1){
               if(arItem.position.y == 1){
-                this.$set(this.style,pkIndex,'left:75rpx;'+'top:75rpx;'+'position: absolute;')
+                this.$set(this.style,pkIndex,'left:60rpx;'+'top:27rpx;'+'position: absolute;')
               }
               else if(arItem.position.y == 2){
-                this.$set(this.style,pkIndex,'left:325rpx;'+'top:75rpx;'+'position: absolute;')
+                this.$set(this.style,pkIndex,'left:307rpx;'+'top:27rpx;'+'position: absolute;')
               }
               else if(arItem.position.y == 3){
-                this.$set(this.style,pkIndex,'left:575rpx;'+'top:75rpx;'+'position: absolute;')
+                this.$set(this.style,pkIndex,'left:560rpx;'+'top:27rpx;'+'position: absolute;')
               }
             }
             else if(arItem.position.x == 2){
               if(arItem.position.y == 1){
-                this.$set(this.style,pkIndex,'left:75rpx;'+'top:325rpx;'+'position: absolute;')
+                this.$set(this.style,pkIndex,'left:60rpx;'+'top:277rpx;'+'position: absolute;')
               }
               else if(arItem.position.y == 2){
-                this.$set(this.style,pkIndex,'left:325rpx;'+'top:325rpx;'+'position: absolute;')
+                this.$set(this.style,pkIndex,'left:307rpx;'+'top:277rpx;'+'position: absolute;')
               }
               else if(arItem.position.y == 3){
-                this.$set(this.style,pkIndex,'left:575rpx;'+'top:325rpx;'+'position: absolute;')
+                this.$set(this.style,pkIndex,'left:560rpx;'+'top:277rpx;'+'position: absolute;')
               }
             }
             else if(arItem.position.x == 3){
               if(arItem.position.y == 1){
-                this.$set(this.style,pkIndex,'left:75rpx;'+'top:575rpx;'+'position: absolute;')
+                this.$set(this.style,pkIndex,'left:60rpx;'+'top:527rpx;'+'position: absolute;')
               }
               else if(arItem.position.y == 2){
-                this.$set(this.style,pkIndex,'left:325rpx;'+'top:575rpx;'+'position: absolute;')
+                this.$set(this.style,pkIndex,'left:307rpx;'+'top:527rpx;'+'position: absolute;')
               }
               else if(arItem.position.y == 3){
-                this.$set(this.style,pkIndex,'left:575rpx;'+'top:575rpx;'+'position: absolute;')
+                this.$set(this.style,pkIndex,'left:560rpx;'+'top:527rpx;'+'position: absolute;')
               }
             }
           }
@@ -515,6 +517,10 @@ export default {
   watch:{
     array (newData) {
       let data = pk.toDBPoker(newData)
+      let userid  = store.state.userId
+      data.forEach(item=>{
+        item.userId = userid
+      })
       service.AddMyArray({pokerList:JSON.stringify(data)})
     }
   },
@@ -536,6 +542,10 @@ export default {
   }
   .con{
     position: relative;
+    display: flex;
+    flex-direction: column;
+    width: 100vw;
+    height: 100vh;
   }
   .array{
     display: flex;
@@ -547,18 +557,33 @@ export default {
   .array-item{
     width: 250rpx;
     height: 250rpx;
-    border: 1px solid  black;
+    border: 10px solid black;
     box-sizing: border-box;
 
   }
+  .myPoker{
+    border-radius: 20rpx;
+    border: 10px solid black;
+    height: 400rpx;  
+    width: 100vw; 
+  }
+  .myPoker-font{
+    height: 80rpx;
+    line-height: 80rpx;
+    font-size: 20px;
+    text-align: center;
+    background: #9911ff
+  }
   .poker-box{
     display: flex;
-    
+    flex-wrap: wrap;
+    height: 320rpx;
+    width: 100%;
   }
-  .arrayPokerShow{
+  /* .arrayPokerShow{
     width: 150rpx;
-    height: 150rpx;
+    height: 225rpx;
     background-size: cover;
     background-position: 100% 100%;
-  }
+  } */
 </style>
