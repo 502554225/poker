@@ -4,7 +4,7 @@ var goodsInfors =[
         type:'gold',
         num:1000,
         get:'drawNum',
-        getNumm:1
+        getNumm:1,
     },
     {
         src:'../../../static/img/back-face-pattern.png',

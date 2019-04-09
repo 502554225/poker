@@ -30,6 +30,8 @@ export default {
       opponent:[],
       myOrder:[[],[],[]],
       opOrder:[[],[],[]],
+      myList:[],
+      opList:[],
       success:'111',
       guanka:0,
       c:0,
@@ -45,17 +47,15 @@ export default {
   },
   methods: {
     confirm(){
-      console.log('confirm')
       this.popupShow = false;
       clearInterval(this.c);      
     },
     upDataOrder(){//更新攻击顺序,根据对方存活卡牌，依据X,Y坐标生成进攻顺序
       console.log('更新进攻顺序')
-      console.log('op:',this.opponent)
       this.isGameOver()
       this.myOrder=[[],[],[]]
       this.opOrder=[[],[],[]]
-      for (let y=3;y>0;y--){
+      for (let y=3;y>0;y--){  
         for(let x=1;x<4;x++){
           this.opponent.forEach((item,index)=>{
             if ((item.position.x===x)&&(item.position.y===y)&&item.survival){
@@ -97,6 +97,15 @@ export default {
           })
         }
       }
+      this.myList = []
+      this.opList = []
+      this.my.forEach((item,index)=>{
+        if(item.survival === 1) this.myList.push(index)
+      })
+      this.opponent.forEach((item,index)=>{
+        if(item.survival === 1) this.opList.push(index)
+      })
+      console.log('myList:',this.myList,'opList:',this.opList)
     },
     async startGame(){
       let vm=this
@@ -108,8 +117,9 @@ export default {
       let index = 0;
       let vm=this
       let time =0
-      this.c= setInterval(async ()=> {   
-           if ((index>=(this.my.length))&&(index>=(this.opponent.length))){ //终止本回合
+      this.c= setInterval(async ()=> {
+            time = 0  
+           if ((index>=(this.myList.length))&&(index>=(this.opList.length))){ //终止本回合
              console.log('终止本回合:index:',index)
              this.my.forEach(item=>{
                item.action=''
@@ -130,38 +140,41 @@ export default {
                this.roundStart()
              }
            }  
-          console.log('每方的第',index+1,'张卡牌出战')
-         if (this.my[index].survival === 1) { //我方
-           let item = this.myOrder[this.my[index].position.y-1].find(item=>{ //根据index找到第一个符合条件的进攻对象
-              return this.opponent[item]
-           })
-           console.log(item)
-          await this.myAttack(index,item)
-           console.log('我方',this.my[index].position.x,",",this.my[index].position.y,'进攻',this.opponent[item].position.x,',',this.opponent[item].position.y,'完毕')
+          console.log('INDEX:',index,'========')
+         if (this.myList[index]>=0) { //我方
+            let index2 = this.myList[index]
+            console.log('myindex2:',index2)
+            let item = this.myOrder[this.my[index2].position.y-1].find(item=>{ //根据index找到第一个符合条件的进攻对象
+                return this.opponent[item]
+            })
+            await this.myAttack(index2,item)
+            console.log('我方',this.my[index2],",",'进攻',this.opponent[item],'完毕')
          }
-
           this.isGameOver()
-         if (this.opponent[index].survival === 1) { //敌方
-         console.log('oooo:',this.opponent[index])
-           setTimeout(await function() {
-              let item = this.opOrder[this.opponent[index].position.y-1].find(item=>{
-                 return this.my[item]
-               })
-             this.opAttack(index,item)
-             console.log('敌方',this.opponent[index].position.x,",",this.opponent[index].position.y,'进攻',this.my[item].position.x,',',this.my[item].position.y,'完毕')
+         if (this.opList[index]>=0) { //敌方
+            let index2 = this.opList[index]
+            console.log('opindex2:',index2)
+            setTimeout(await function() {
+                let item = this.opOrder[this.opponent[index2].position.y-1].find(item=>{
+                  return this.my[item]
+                })
+              this.opAttack(index2,item)
+              console.log('敌方',this.opponent[index2],",",'进攻',this.my[item],'完毕')
 
-           }.bind(this),1200)
+            }.bind(this),1200)
          }
 
          setTimeout(await function() {
-           if (!this.opponent[index]) {
+           if (!(this.opList>=0)||!(this.myList>=0)) {
              time = 1200;
            }
-           else{
+           if (!(this.opList>=0)&&!(this.myList>=0)) {
+             time = 2399;
+           }
+           if((this.opList>=0)&&(this.myList>=0)){
              time =0;
            }
-            this.isGameOver()
-          
+            // this.isGameOver()
            index++
          }.bind(this),1200)
      },(2400-time))
@@ -236,7 +249,6 @@ export default {
       }
       else {
        this.opponent[num1].action = "op-atc-" + vm.my[num2].position.x + '-' + vm.my[num2].position.y
-       console.log('后class:',this.opponent[num1].action)
         setTimeout(await function() {
           vm.damage('my',num1,num2,1)
         },400)
@@ -277,18 +289,18 @@ export default {
           return
         }
         else {
-
           if (Math.random()>=crits){ //如果为暴击则伤害倍数为1
             doubleDamage =1;
           }
-          damage = (aggressivity1)*doubleDamage*x-defenses2;
+          damage = ((aggressivity1*10000)*(doubleDamage*10)*(x*10)-defenses2*1000000)/1000000;//解决浮点类型bug
+          console.log('D  A  M A  G  E:',damage)
           if(damage<=0) damage = 1
         // }
         }
 
       if (str==='my'){ //数值计算
         if (damage!==0){
-          let life = this.my[num2].life-damage;
+          let life = (this.my[num2].life*100000-damage*100000)/100000; //解决浮点类型bug
           this.$set(this.my[num2],'life',life)
           if (this.my[num2].life<=0){
             // this.my.splice(num2,1)
@@ -302,13 +314,11 @@ export default {
           let life = this.opponent[num2].life-damage;
           this.$set(this.opponent[num2],'life',life)
           if (this.opponent[num2].life<=0){
-            // this.opponent.splice(num2,1)
             this.opponent[num2].survival = 0;
             this.upDataOrder()
           } ;
         }
-        }
-
+      }
     },
     skill(str,num1,num2,skillNum){
       let vm=this

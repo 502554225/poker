@@ -21,10 +21,14 @@ export default {
             switch(this.goodsInfor.type)
             {
                 case 'gold':
-                    myInfor.gold -= this.goodsInfor.num
-                    if(this.goodsInfor.get == 'drawNum') myInfor.drawNum += this.goodsInfor.getNum
-                    store.commit('setMyInfor',myInfor)
-                    service.SaveMyInfor(store.state.myInfor)
+                    if(myInfor.gold >=this.goodsInfor.num){
+                        myInfor.gold -= this.goodsInfor.num
+                        if(this.goodsInfor.get == 'drawNum') myInfor.drawNum += this.goodsInfor.getNum
+                        store.commit('setMyInfor',myInfor)
+                        service.SaveMyInfor(store.state.myInfor)
+                        this.$emit('goods','购买成功！')
+                    }
+                    else this.$emit('goods','金币不足，购买失败！')
                 break;
                 case 'drawNum':
                     this.$emit('draw')

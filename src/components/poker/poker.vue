@@ -15,10 +15,10 @@
       <div class="img">
         {{pokerData.life}}
         {{pokerData.vigour}}
+        {{pokerData.aggressivity}}
+        {{pokerData.defenses}}
       </div>
-
       <span class="damage" :class="{'damageAn':damageClass}">{{damage}}</span>
-
     </div>
 </template>
 
@@ -30,17 +30,12 @@
         test:'',
         damage:0,
         damageClass:false,
-        // life:100,
-        // vigour:0,
       }
     },
     props:{
       pokerData: {}
     },
     computed:{
-      coEvade(){
-        
-      },
       positionClass(){
         let ascription;
         if (this.pokerData.ascription===1){
@@ -63,7 +58,7 @@
         deep: true,
         handler(val,ov){
           if (val!==ov){
-            this.damage=val-ov;
+            this.damage=(val*10000-ov*10000)/10000;
             this.damageClass=true;
             let vm=this;
             setTimeout(function() {
@@ -101,9 +96,6 @@
   div,span,button{
     box-sizing: border-box;
   }
-  /*html{*/
-    /*font-size: 20px;*/
-  /*}*/
   .poker{
     position: relative;
     width: 160rpx;

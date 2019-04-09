@@ -44,7 +44,7 @@
       <div v-if="page==='Draw'" class="draw">
         <h2 style="font-size:24px;text-align:center">xxx的商店</h2>
         <div v-if="!isDrive" class="content-box">
-          <goods v-for="(item,key) in goodsInfors" :key="key" :goodsInfor="item" @draw="toDraw"></goods>
+          <goods v-for="(item,key) in goodsInfors" :key="key" :goodsInfor="item" @draw="toDraw" @goods="goods"></goods>
         </div>
         <div v-if="isDrive" class="draw-body" > 
           <div class="draw-box">
@@ -66,12 +66,13 @@
       <popup ref="saodang" title="扫荡" type="saodang" :show="popupShow" @confirm="popupConfirm" @success="successPopup = true" @fail="failPopup = true"></popup>
       <popup title="提示" words="扫荡成功！" :show="successPopup" @confirm="popupConfirm"></popup>
       <popup title="提示" words="体力不足！" :show="failPopup" @confirm="popupConfirm"></popup>
+      <popup title="提示" :words="goodsWords" :show="goodsPopup" @confirm="popupConfirm"></popup>
       <popup title="提示" words="你已获取所有卡牌！" :show="drawPopup" :to="{page:'logs'}"  @confirm="popupConfirm"></popup>
   </div>
 </template>
 
 <script>
-import { formatTime } from '@/utils/index';
+import { formatTime } from '@/utils/index'; //加一个购买成功弹窗
 import card from '@/components/card';
 import groove from '@/components/groove/groove';
 import pokerbase from '@/components/poker-base/poker-base';
@@ -107,8 +108,10 @@ export default {
       failPopup:false, //扫荡失败弹窗
       successPopup:false, //扫荡成功弹窗
       drawPopup:false, //抽满卡牌弹窗
+      goodsPopup:false,//购买弹窗
       drawBtn:false, //抽卡成功后按钮,
       drawInit:false,
+      goodsWords:'',//购买弹窗的words
       userInfor:{
         avatarUrl:'',
         nickName:''
@@ -140,11 +143,15 @@ export default {
     this.init()
   },
   methods:{
+    goods(data){
+      this.goodsWords = data
+      this.goodsPopup = true
+    },
     drawAgain(){
-      console.log('jinle')
       this.drawPopup = false
       this.drawBtn = false 
       this.drawInit = true
+      this.drawInit = false
     },
     drawOver(){
       this.drawAgain()
@@ -158,6 +165,7 @@ export default {
       this.successPopup = false
       this.failPopup = false
       this.drawPopup = false
+      this.goodsPopup = false
       if(str === 'saodang'){
         this.$refs.saodang.saodang()
       }
