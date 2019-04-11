@@ -12,12 +12,12 @@
           <div class="vigour" :class="'vigour'+pokerData.vigour"></div>
         </div>
       </div>
-      <div class="img">
-        {{pokerData.life}}
+      <img class="img" :src="pokerData.src">
+        <!-- {{pokerData.life}}
         {{pokerData.vigour}}
         {{pokerData.aggressivity}}
         {{pokerData.defenses}}
-      </div>
+      </img> -->
       <span class="damage" :class="{'damageAn':damageClass}">{{damage}}</span>
     </div>
 </template>

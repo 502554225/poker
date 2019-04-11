@@ -18,6 +18,7 @@ import opList from '../../utils/opList.js'
 import { setTimeout } from 'timers';
 import store from '../../store/store';
 import levelList from '../../utils/levelList.js';
+import { MyImgList,OpImgList } from '../../utils/imgSrc';
 export default {
   components:{
     poker,
@@ -209,24 +210,22 @@ export default {
             })
             service.AddMyArray({pokerList:JSON.stringify(res.data)})
           })
-          
-          if(myInfor.levelG<=this.guanka){
+          myInfor.gold+=levelList[myInfor.levelG-1].gold
+          this.rewardShow.numList[1] = level.gold
+          console.log('gold:',levelList[myInfor.levelG-1])
+          if(myInfor.levelG<=this.guanka){ //如果第一次通关
             myInfor.drawNum+=levelList[myInfor.levelG-1].drawNum
-            myInfor.gold+=levelList[myInfor.levelG-1].gold
             myInfor.levelG++ 
-            this.rewardShow.numList[1] = level.gold
             this.rewardShow.numList[2] = level.drawNum
-            await service.SaveMyInfor({'infor':JSON.stringify(myInfor)}) //更新关卡
           }
+          await service.SaveMyInfor({'infor':JSON.stringify(myInfor)}) //更新关卡
         }
         clearInterval(this.c)
       }
     },
     myAttack:async function(num1, num2) { 
-      // console.log('myA',num1,num2)
       let vm =this
       if (vm.my[num1].vigour>=100){ //如果气势大于100则使用技能
-        // console.log('>100<')
         await this.skill('op',num1,num2,this.my[num1].skill)
       }
       else{ //否则普通攻击
@@ -331,9 +330,10 @@ export default {
       await service.ToArray({'opList':JSON.stringify(opList[levelG-1])}).then(res=>{
         opponent = pk.computed(pk.toPoker(res.data))
       })  
-      opponent.forEach(item=>{
+      opponent.forEach((item,index)=>{
         item.isEvade = false
         item.survival = 1
+        item.src = MyImgList[index]
       })
       this.opponent = opponent
       this.myOrder=[[],[],[]]

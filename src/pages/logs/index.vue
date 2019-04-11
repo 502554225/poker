@@ -84,6 +84,7 @@ import level from '@/components/level';
 import goods from '@/components/goods';
 import Infors from '../../utils/goodsInfors.js';
 import popup from '../../components/popup/popup.vue';
+import {MyImgList,OpImgList} from '../../utils/imgSrc.js';
 export default {
   components: {   
     card,
@@ -199,8 +200,9 @@ export default {
       await service.GetMyAll().then(res=>{
         c = pk.computed(pk.toPoker(res.data))
       })
-      c.forEach(item=>{ //添加isChoose属性 避免后续报错
+      c.forEach((item,index)=>{ //添加isChoose属性 避免后续报错
         item.isChoose = false
+        item.src = MyImgList[index]
       })
       c[0].isChoose = true
       this.pokers = c
@@ -213,7 +215,6 @@ export default {
     toDraw(){
       this.isDrive = true
     },
-   
     start(){
        wx.navigateTo({
         url:'/pages/guanka/main'
