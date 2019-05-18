@@ -201,7 +201,6 @@ export default {
       mySrc:myList2
     }
   },
-
   components: {
     draggable,
     poker,
@@ -226,7 +225,6 @@ export default {
     },
     pokerClass(item){
       console.log('item',item,this.pokerImg[item.pokerId])
-
       return this.pokerImg[item.pokerId]
     },
     down(event){

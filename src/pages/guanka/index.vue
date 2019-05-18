@@ -238,10 +238,8 @@ export default {
       }
     },
     myAttack:async function(num1, num2) { 
-      // console.log('myA',num1,num2)
       let vm =this
       if (vm.my[num1].vigour>=100){ //如果气势大于100则使用技能
-        // console.log('>100<')
         await this.skill('op',num1,num2,this.my[num1].skill)
       }
       else{ //否则普通攻击
@@ -346,7 +344,7 @@ export default {
       await service.ToArray({'opList':JSON.stringify(opList[levelG-1])}).then(res=>{
         opponent = pk.computed(pk.toPoker(res.data))
       })  
-      opponent.forEach(item=>{
+      opponent.forEach((item,index)=>{
         item.isEvade = false
         item.survival = 1
         item.src = opList1[item.pokerId]

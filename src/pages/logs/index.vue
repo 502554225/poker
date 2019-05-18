@@ -238,7 +238,7 @@ export default {
       await service.GetMyAll().then(res=>{
         c = pk.computed(pk.toPoker(res.data))
       })
-      c.forEach(item=>{ //添加isChoose属性 避免后续报错
+      c.forEach((item,index)=>{ //添加isChoose属性 避免后续报错
         item.isChoose = false
         item.src = myList2[item.pokerId]
       })
@@ -253,7 +253,6 @@ export default {
     toDraw(){
       this.isDrive = true
     },
-   
     start(){
        wx.navigateTo({
         url:'/pages/guanka/main'

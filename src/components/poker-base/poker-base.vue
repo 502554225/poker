@@ -12,6 +12,10 @@ import store from '../../store/store.js'
 export default {
     name:'pokerbase',
     props:{
+        // src:{
+        //     type:String,
+        //     default:'../../../static/img/battle-bg.png',
+        // },
         isInit:{
             type:Boolean,
             default:false
@@ -61,9 +65,8 @@ export default {
 
     data(){
         return{
-            src:'../../../static/img/battle-bg.png',
-            isCheck:false,
             
+            isCheck:false,
         }
     },
     mounted(){
@@ -122,9 +125,9 @@ export default {
         },
         init(){
             this.isCheck = false
-            if(this.pokerData){
-                this.src = '../../../static/img/battle-bg.png'  //未填写poker的src 这是默认的
-            }
+            // if(this.pokerData){
+            //     this.src = '../../../static/img/battle-bg.png'  //未填写poker的src 这是默认的
+            // }
         },
         checkit(){
             
