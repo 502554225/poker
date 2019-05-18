@@ -21,19 +21,7 @@ import { AxiosRequestConfig, AxiosResponse } from 'axios'
 // }
 
 const myService={
-    Login : 'https://localhost:44322/api/Poker/Login'
-    ,
-
-    AddMyPoker:'https://localhost:44322/api/Poker/AddMyPoker'
-    ,
-
-    AddMyArray:'https://localhost:44322/api/Poker/AddMyArray'
-    ,
-
-    GetMyAll:'https://localhost:44322/api/Poker/GetMyAll'
-    ,
-
-    GetAll:'https://localhost:44322/api/Poker/GetAll'
-    ,
+    // Login : 'https://170.20.10.3:5001/api/Poker/Login'
+    Login : 'https://localhost:5001/api/Poker/Login'
 }
 export default myService;

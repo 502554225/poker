@@ -4,6 +4,12 @@
       <poker v-for="(item,index) in opponent" :key="index" :pokerData="item"></poker>
       <poker v-for="(item,index) in my" :key="index" :pokerData="item"></poker>
     </div>
+    <img src="../../../static/img/skill.png" :class="{'skillAn' : skillN===1||skillN===7}" class="skill" style="top:70rpx" background-size:cover>
+    <img src="../../../static/img/skill.png" :class="{'skillAn' : skillN===2||skillN===7}" class="skill" style="top:240rpx" background-size:cover>
+    <img src="../../../static/img/skill.png" :class="{'skillAn' : skillN===3||skillN===7}" class="skill" style="top:410rpx" background-size:cover>
+    <img src="../../../static/img/skill.png" :class="{'skillAn' : skillN===4||skillN===8}" class="skill" style="top:705rpx" background-size:cover>
+    <img src="../../../static/img/skill.png" :class="{'skillAn' : skillN===5||skillN===8}" class="skill" style="top:875rpx" background-size:cover>
+    <img src="../../../static/img/skill.png" :class="{'skillAn' : skillN===6||skillN===8}" class="skill" style="top:1075rpx" background-size:cover>
     <popup :title="success ? '成功' : '失败'" :reward="rewardShow" :words="success ? '你已消灭所有敌人' : '还差那么一点点'" :to="{page:'logs'}" :show="popupShow" @confirm="confirm"></popup>
   </div>
 </template>)
@@ -18,6 +24,7 @@ import opList from '../../utils/opList.js'
 import { setTimeout } from 'timers';
 import store from '../../store/store';
 import levelList from '../../utils/levelList.js';
+import {myList1,opList1} from "../../utils/imgSrc.js";
 export default {
   components:{
     poker,
@@ -39,7 +46,8 @@ export default {
       rewardShow:{
         isShow:false,
         numList:[0,0,0]
-      }
+      },
+      skillN:0
     }
   },
   computed:{
@@ -53,17 +61,18 @@ export default {
     upDataOrder(){//更新攻击顺序,根据对方存活卡牌，依据X,Y坐标生成进攻顺序
       console.log('更新进攻顺序')
       this.isGameOver()
+      this.skillN = 0
       this.myOrder=[[],[],[]]
       this.opOrder=[[],[],[]]
-      for (let y=3;y>0;y--){  
+      for (let y of [3,2,1]){  
         for(let x=1;x<4;x++){
           this.opponent.forEach((item,index)=>{
-            if ((item.position.x===x)&&(item.position.y===y)&&item.survival){
+            if ((item.position.x===x)&&(item.position.y===y)&&item.survival===1){
               this.myOrder[0].push(index)
             }
           })
           this.my.forEach((item,index)=>{
-            if ((item.position.x===x)&&(item.position.y===y)&&item.survival){
+            if ((item.position.x===x)&&(item.position.y===y)&&item.survival===1){
               this.opOrder[0].push(index)
             }
           })
@@ -72,26 +81,26 @@ export default {
       for (let y of [2,3,1]){
         for(let x=1;x<4;x++){
           this.opponent.forEach((item,index)=>{
-            if (item.position.x===x&&item.position.y===y&&item.survival){
+            if (item.position.x===x&&item.position.y===y&&item.survival===1){
               this.myOrder[1].push(index)
             }
           })
           this.my.forEach((item,index)=>{
-            if (item.position.x===x&&item.position.y===y&&item.survival){
+            if (item.position.x===x&&item.position.y===y&&item.survival===1){
               this.opOrder[1].push(index)
             }
           })
         }
       }
-      for (let y of [1,3,2]){
+      for (let y of [1,2,3]){
         for(let x=1;x<4;x++){
           this.opponent.forEach((item,index)=>{
-            if (item.position.x===x&&item.position.y===y&&item.survival){
+            if (item.position.x===x&&item.position.y===y&&item.survival===1){
               this.myOrder[2].push(index)
             }
           })
           this.my.forEach((item,index)=>{
-            if (item.position.x===x&&item.position.y===y&&item.survival){
+            if (item.position.x===x&&item.position.y===y&&item.survival===1){
               this.opOrder[2].push(index)
             }
           })
@@ -105,6 +114,7 @@ export default {
       this.opponent.forEach((item,index)=>{
         if(item.survival === 1) this.opList.push(index)
       })
+      console.log('数据更新,myorder:',this.myOrder,'opOrder:',this.opOrder)
       console.log('myList:',this.myList,'opList:',this.opList)
     },
     async startGame(){
@@ -182,7 +192,12 @@ export default {
           clearInterval(this.c);                                    
       })
     },
+    setSkillN(num){
+      console.log('setSkill')
+      this.skillN=num
+    },
     async isGameOver(){ 
+      console.log('skillN:',this.skillN)
       let vm = this
       let MY = this.my.every((item)=>{ //所有不存在则返回true 
         return item.survival === 0
@@ -197,7 +212,6 @@ export default {
         }
         else {
           vm.$set(vm,'success',true)
-          this.popupShow = true
           let myInfor = store.state.myInfor
           let level = levelList[myInfor.levelG-1] //计算对应关卡的经验
           await service.AddLevel({level:level.level})
@@ -209,15 +223,16 @@ export default {
             })
             service.AddMyArray({pokerList:JSON.stringify(res.data)})
           })
-          
+          this.rewardShow.numList[1] = level.gold 
+          myInfor.gold+=levelList[myInfor.levelG-1].gold
           if(myInfor.levelG<=this.guanka){
             myInfor.drawNum+=levelList[myInfor.levelG-1].drawNum
-            myInfor.gold+=levelList[myInfor.levelG-1].gold
             myInfor.levelG++ 
-            this.rewardShow.numList[1] = level.gold
             this.rewardShow.numList[2] = level.drawNum
-            await service.SaveMyInfor({'infor':JSON.stringify(myInfor)}) //更新关卡
           }
+          this.popupShow = true
+          console.log('sih:',this.rewardShow)
+          await service.SaveMyInfor({'infor':JSON.stringify(myInfor)}) //更新关卡
         }
         clearInterval(this.c)
       }
@@ -334,6 +349,7 @@ export default {
       opponent.forEach(item=>{
         item.isEvade = false
         item.survival = 1
+        item.src = opList1[item.pokerId]
       })
       this.opponent = opponent
       this.myOrder=[[],[],[]]
@@ -346,9 +362,9 @@ export default {
       my.forEach(item=>{
         item.isEvade = false //是否闪避
         item.survival = 1
+        item.src = myList1[item.pokerId]
       })
       this.my = my
-      // let mypk = []
       console.log('my:',this.my)
       let length = this.my.length
       console.log('op:',this.opponent)
@@ -397,5 +413,34 @@ export default {
   margin-right: 100rpx;
   height: 100vh;
   background: #91f;
+}
+.skill{
+  position: absolute;
+  height: 100rpx;
+  width: 100rpx;
+  z-index: 1000;
+  left: 120rpx;
+  visibility: hidden;
+}
+@keyframes skill{
+  0%{
+    left: 120rpx;
+    visibility:visible;
+  }
+  1%{
+    left: 120rpx;
+    visibility:visible;
+  }
+  99%{
+    left: 550rpx;
+    visibility:visible;
+  }
+  100%{
+    left: 120rpx;
+    visibility:hidden;
+  }
+}
+.skillAn{
+  animation: skill 1.0s ease both;
 }
 </style>

@@ -1,12 +1,14 @@
 <template>
     <div class="poker-base" :class="{'isChoose' : pokerData.isChoose}" :style="{'width':width+'rpx','height':1.5*width+'rpx','margin-bottom':marginBottom+'rpx'}" @click="choosePoker">
         <!-- <div class="back"></div> -->
-        <img :class="{'conb' : isCheck}" :src="src" alt="">
+        <img :class="{'conb' : isCheck}" :src="pokerData.src" alt="">
         <img v-if="check" :class="{'cona' : isCheck}" src="../../../static/img/back-face-pattern.png" alt="">
     </div>
 </template>
 <script>
 import service from '../../api/service.js';
+import {myList2} from '../../utils/imgSrc.js'
+import store from '../../store/store.js'
 export default {
     name:'pokerbase',
     props:{
@@ -69,42 +71,52 @@ export default {
     },
     methods:{
          async drive(){
-            let allPokers
-            let drawPokers=[]
-            await service.GetAll().then(res=>{
-                allPokers = res.data
-            })
-            await service.GetMyAll().then(res=>{   
-                
-                 allPokers.forEach(item=>{
-                   if(res.data.every(item2=>{
-                        return item2.pokerId !==item.pokerId
-                    })) {
-                        drawPokers.push(item.pokerId)
-                    }
-                }) 
-                
-            })
-            console.log('drawPokers:',drawPokers)
-            if(drawPokers.length === 0){
-                this.$emit('pokerFull')// 弹窗提示 抽满了
-            }
+            console.log('store:',store.state.myInfor)
+            let cando
+            if(store.state.myInfor.drawNum>0) cando = true
             else{
-                let len = drawPokers.length
-                let pokerid = drawPokers[Math.floor(Math.random()*len)]
-                console.log(pokerid)
-                service.AddMyPoker({pokerId:pokerid}).then(res=>{
-                    //选中卡牌 后续 出现按钮 （再来一次 确定）
-                        this.$emit('addPoker')
-                }) 
-            }
-           
+                this.$emit('noNum')
+                cando = false 
+            } 
+            console.log('huhuh:',cando) 
+            if(cando){
+                let allPokers
+                let drawPokers=[]
+                await service.GetAll().then(res=>{
+                    allPokers = res.data
+                })
+                await service.GetMyAll().then(res=>{   
+                    allPokers.forEach(item=>{
+                    if(res.data.every(item2=>{
+                            return item2.pokerId !==item.pokerId
+                        })) {
+                            drawPokers.push(item.pokerId)
+                        }
+                    }) 
+                })
+                console.log('drawPokers:',drawPokers)
+                if(drawPokers.length === 0){
+                    this.$emit('pokerFull')// 弹窗提示 抽满了
+                }
+                else{
+                    let len = drawPokers.length
+                    let pokerid = drawPokers[Math.floor(Math.random()*len)]
+                    console.log(pokerid)
+                    this.pokerData.src = myList2[pokerid]
+                    this.$set(this,'isCheck',true)
+                    service.AddMyPoker({pokerId:pokerid})
+                    let myInfor = store.state.myInfor
+                    myInfor.drawNum--
+                    store.commit('setMyInfor',myInfor)
+                    this.$emit('addPoker')
+                    service.SaveMyInfor({infor:JSON.stringify(myInfor)})
+                }
+            } 
         },
         choosePoker(){
             console.log('poker:',this.pokerData)
             this.$emit('choosePoker',this.pokerData)
             if(this.check){
-                this.$set(this,'isCheck',true)
                 this.drive()
             }
         },

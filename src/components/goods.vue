@@ -2,7 +2,8 @@
     <div class="goods">
         <img :src="goodsInfor.src" class="image">
         <div class="btn" @click="buy">
-            {{goodsInfor.num}}{{goodsInfor.type}}
+            <div class="btn-font">{{goodsInfor.num}}</div>
+            <img class="img" :src="[goodsInfor.type === 'gold' ? '../../static/img/gold.png' : '../../static/img/chouka.png']" background-size="cover">
         </div>
     </div>
 </template>
@@ -12,7 +13,7 @@ import service from '../api/service.js';
 export default {
     props:{
         goodsInfor:{
-            type:Boolean,
+            type:Object,
         }
     },
     methods:{
@@ -25,7 +26,7 @@ export default {
                         myInfor.gold -= this.goodsInfor.num
                         if(this.goodsInfor.get == 'drawNum') myInfor.drawNum += this.goodsInfor.getNum
                         store.commit('setMyInfor',myInfor)
-                        service.SaveMyInfor(store.state.myInfor)
+                        service.SaveMyInfor({'infor':JSON.stringify(myInfor)})
                         this.$emit('goods','购买成功！')
                     }
                     else this.$emit('goods','金币不足，购买失败！')
@@ -49,8 +50,20 @@ export default {
     height: 200rpx;
 }
 .btn{
+    display: flex;
+    justify-content: center;
     width: 200rpx;
     height: 50rpx;
     font-size: 14px;
+    box-sizing: border-box;
+    border: 1px solid red;
+}
+.btn-font{
+    height: 50rpx;
+    line-height: 50rpx;
+}
+.img{
+    width: 40rpx;
+    height: 40rpx;
 }
 </style>

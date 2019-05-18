@@ -1,19 +1,16 @@
 <template>
   <div class="container" @click="clickHandle('test click', $event)">
-
     <div class="userinfo" @click="bindViewTap">
       <img class="userinfo-avatar" v-if="userInfo.avatarUrl" :src="userInfo.avatarUrl" background-size="cover" />
       <div class="userinfo-nickname">
         <card :text="userInfo.nickName"></card>
       </div>
     </div>
-
     <div class="usermotto">
       <div class="user-motto">
         <card :text="motto"></card>
       </div>
     </div>
-
     <button open-type='getUserInfo' >获取授权</button>
   </div>
 </template>
@@ -27,7 +24,7 @@ import { userInfo } from 'os';
 export default {
   data () {
     return {
-      motto: 'Hello World',
+      motto: '点击头像进入游戏',
       userInfo: {}
     }
   },

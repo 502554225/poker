@@ -58,6 +58,9 @@ export default {
             default:false
         }
     },
+    mounted(){
+        console.log('list:',this.reward)
+    },
     methods:{
         confirm(){
             if(this.to){  
@@ -91,6 +94,9 @@ export default {
             }
             else{
                 myInfor.fatigueNum-=num*5
+                let gold = levelList[this.saodangLevel-1].gold
+                console.log('gold:',levelList[this.saodangLevel-1].gold)
+                myInfor.gold+=num*gold
                 store.commit('setMyInfor',myInfor)
                 await service.SaveMyInfor({infor:JSON.stringify(myInfor)})
                 await service.AddLevel({level:levelG*num})

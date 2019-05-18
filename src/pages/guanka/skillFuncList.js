@@ -41,6 +41,7 @@ export default [
   },
   async function(vm,str,num1,num2) {//skill 3 群体攻击0.7倍
     if (str==='op'){
+      vm.skillN = 7
       setTimeout(await function() {
         vm.opponent.forEach((item,index)=>{
           vm.damage(str,num1,index,0.7)
@@ -49,6 +50,7 @@ export default [
       vm.my[num1].vigour=0
     }
     else {
+      vm.skillN = 8
       setTimeout(await function() {
         vm.my.forEach((item,index)=>{
           vm.damage(str,num1,index,0.7)
@@ -60,6 +62,7 @@ export default [
 
   async function(vm,str,num1,num2) {//skill 4 群体攻击1.0倍
     if (str==='op'){
+      vm.skillN = 7
       setTimeout(await function() {
         vm.opponent.forEach((item,index)=>{
           vm.damage(str,num1,index,1)
@@ -68,6 +71,7 @@ export default [
       vm.my[num1].vigour=0
     }
     else {
+      vm.skillN = 8
       setTimeout(await function() {
         vm.my.forEach((item,index)=>{
           vm.damage(str,num1,index,1)
@@ -77,8 +81,10 @@ export default [
     }
   },
 
-  async function(vm,str,num1,num2) {//skill 5 群体攻击0.7倍
+  async function(vm,str,num1,num2) {//skill 5 群体攻击1.3倍
+
     if (str==='op'){
+      vm.skillN = 7
       setTimeout(await function() {
         vm.opponent.forEach((item,index)=>{
           vm.damage(str,num1,index,1.3)
@@ -87,6 +93,7 @@ export default [
       vm.my[num1].vigour=0
     }
     else {
+      vm.skillN = 8
       setTimeout(await function() {
         vm.my.forEach((item,index)=>{
           vm.damage(str,num1,index,1.3)
@@ -97,33 +104,66 @@ export default [
   },
 
   async function(vm,str,num1,num2) {//skill 6 最后一排攻击1.3倍
-    if (str==='op'){
-      setTimeout(await function() {
-        vm.opponent.forEach((item,index)=>{
-          if(item.position.x === 3){
-            vm.damage(str,num1,index,1.3)
-          }
-        })
-      },400)
-      vm.my[num1].vigour=0
-    }
-    else {
-      setTimeout(await function() {
-        vm.my.forEach((item,index)=>{
-          if(item.position.x === 3){
-            vm.damage(str,num1,index,1.3)
-          }
-        })
-      },400)
-      vm.opponent[num1].vigour=0
-    }
+      let num 
+      let list
+      if (str==='op'){
+        list = vm.opponent
+      }
+      else list = vm.my
+      list.forEach(item=>{ //判断最后一排是哪一排
+        if(item.position.x === 3){
+          num = 3
+        }
+        else if(item.position.x === 2){
+          num = 2
+        }
+        else num = 1
+      })
+      if (str==='op'){
+        vm.setSkillN(4-num)
+        setTimeout(await function() {
+          vm.opponent.forEach((item,index)=>{
+            if(item.position.x === num){
+              vm.damage(str,num1,index,1.3)
+            }
+          })
+        },400)
+        vm.my[num1].vigour=0
+      }
+      else {
+        vm.setSkillN(3+num)
+        setTimeout(await function() {
+          vm.my.forEach((item,index)=>{
+            if(item.position.x === 3){
+              vm.damage(str,num1,index,1.3)
+            }
+          })
+        },400)
+        vm.opponent[num1].vigour=0
+      }
   },
 
   async function(vm,str,num1,num2) {//skill 7 最后一排攻击1.6倍
+    let num 
+    let list
     if (str==='op'){
+      list = vm.opponent
+    }
+    else list = vm.my
+    list.forEach(item=>{ //判断最后一排是哪一排
+      if(item.position.x === 3){
+        num = 3
+      }
+      else if(item.position.x === 2){
+        num = 2
+      }
+      else num = 1
+    })
+    if (str==='op'){
+      vm.setSkillN(4-num)
       setTimeout(await function() {
         vm.opponent.forEach((item,index)=>{
-          if(item.position.x === 3){
+          if(item.position.x === num){
             vm.damage(str,num1,index,1.6)
           }
         })
@@ -131,6 +171,7 @@ export default [
       vm.my[num1].vigour=0
     }
     else {
+      vm.setSkillN(3+num)
       setTimeout(await function() {
         vm.my.forEach((item,index)=>{
           if(item.position.x === 3){
@@ -141,22 +182,39 @@ export default [
       vm.opponent[num1].vigour=0
     }
   },
-  async function(vm,str,num1,num2) {//skill 8 最后一排攻击1.3倍
+  async function(vm,str,num1,num2) {//skill 8 最后一排攻击1.9倍
+    let num 
+    let list
     if (str==='op'){
+      list = vm.opponent
+    }
+    else list = vm.my
+    list.forEach(item=>{ //判断最后一排是哪一排
+      if(item.position.x === 3){
+        num = 3
+      }
+      else if(item.position.x === 2){
+        num = 2
+      }
+      else num = 1
+    })
+    if (str==='op'){
+      vm.setSkillN(4-num)
       setTimeout(await function() {
         vm.opponent.forEach((item,index)=>{
-          if(item.position.x === 3){
-            vm.damage(str,num1,index,2)
+          if(item.position.x === num){
+            vm.damage(str,num1,index,1.9)
           }
         })
       },400)
       vm.my[num1].vigour=0
     }
     else {
+      vm.setSkillN(3+num)
       setTimeout(await function() {
         vm.my.forEach((item,index)=>{
           if(item.position.x === 3){
-            vm.damage(str,num1,index,2)
+            vm.damage(str,num1,index,1.9)
           }
         })
       },400)

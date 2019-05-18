@@ -1,13 +1,15 @@
 <template>
   <div class="con">
-      <div class="array">
+      <div class="array" style="background:url(../../../static/img/bg5.jpg)">
         <div class="array-item" v-for="(item,index) of 9" :key="index"></div>
       </div>
       <div class="myPoker">
         <div class="myPoker-font">我的卡牌</div>
-        <div scroll-y class="poker-box">
-          <div v-for="(item,index) in myPokers" :key="index" class="arrayPokerShow" style="width: 130rpx;height: 195rpx;background: #777812;" @touchstart="down" @touchmove="move($event,index)" @touchend="end(item,index)" :style="style[index]"></div>
-        </div>
+        <!-- <div scroll-y class="poker-box" style="background:url(../../../static/img/bg6.jpg);background-size:cover"> -->
+          <div class="poker-box2" style="background:url(../../../static/img/bg6.jpg);background-size:cover">
+            <img v-for="(item,index) in myPokers" :src="mySrc[index]" background-size="cover" :key="index" class="arrayPokerShow" style="width: 130rpx;height: 195rpx;" @touchstart="down" @touchmove="move($event,index)" @touchend="end(item,index)" :style="style[index]">
+          </div>
+        <!-- </div> -->
       </div>
   </div>
 </template>
@@ -18,7 +20,7 @@ import poker from '../../components/poker/poker.vue'
 import service from '../../api/service';
 import pk from '../../utils/pokersControl.js';
 import pokerbase from '@/components/poker-base/poker-base';
-import imgList from '../../utils/imgSrc.js';
+import {myList2} from '../../utils/imgSrc.js';
 import store from '../../store/store.js';
 export default {
   name:'1',
@@ -194,7 +196,9 @@ export default {
       position: { x: 0, y: 0 },
       nx: '', ny: '', dx: '', dy: '', xPum: '', yPum: '',
       style:[],
-      pokerImg:imgList
+      pokerImg:myList2,
+      pokerSrc:[],
+      mySrc:myList2
     }
   },
 
@@ -206,12 +210,18 @@ export default {
 
   methods: {
     initBcakground(){
+      console.log('initBack')
+      console.log(this.style)
       this.style.forEach((item,index)=>{ //background放上去
         if(item===0){
-          this.style[index] = 'background:url('+this.pokerImg[this.myPokers[index].pokerId]+');'
+          console.log('true:',this.pokerImg[this.myPokers[index].pokerId])
+          this.style[index] = 'background:url('+this.pokerImg[this.myPokers[index].pokerId]+');background-size:cover;'
         }
-        else
-        this.style[index]+= 'background:url('+this.pokerImg[this.myPokers[index].pokerId]+');'
+        else{
+          console.log('false:',this.pokerImg[this.myPokers[index].pokerId])
+          this.style[index]+= 'background:url('+this.pokerImg[this.myPokers[index].pokerId]+');background-size:cover;'
+        }
+        
       })
     },
     pokerClass(item){
@@ -263,7 +273,9 @@ export default {
           this.yPum=0
         } ;
 
-        this.$set(this.style,index,'left:'+this.xPum+'px;'+'top:'+this.yPum+'px;'+'position: absolute;'+'background:url('+this.pokerImg[this.myPokers[index].pokerId]+');')
+        this.$set(this.style,index,'left:'+this.xPum+'px;'+'top:'+this.yPum+'px;'+'position: absolute;'
+        // +'background:url('+this.pokerImg[this.myPokers[index].pokerId]+');background-size:cover;'
+        )
       }
     },
     end(item,index){
@@ -459,19 +471,27 @@ export default {
       this.flags = false;
       this.position= { x: 0, y: 0 }
       this.nx= '';this.ny= '';this.dx= '';this.dy= '';this.xPum= '';this.yPum= ''
-      this.initBcakground()
+      // this.initBcakground()
+      console.log('moveOver')
     },
     async initStyle(){
       this.style=[]
       console.log('ini:',this.style)
+      let myPokers
       await service.GetMyAll().then(res=>{ //获取我的卡牌
-        this.myPokers = pk.toPoker(res.data)
+        myPokers = pk.toPoker(res.data)
       })
-      
+      myPokers.forEach((item,index)=>{
+        // myPokers.src = myList2[item.pokerId]
+        let style = 'background:url('+myList2[item.pokerId]+');background-size:cover;'
+        this.pokerSrc.push(style)
+      })
+      this.myPokers = myPokers
       await service.GetMyArray().then(res=>{ //获取我的布阵
         this.array = pk.toPoker(res.data)
       })
-      this.myPokers.forEach((pkItem,pkIndex)=>{ //将一布阵的卡牌设置位置
+      console.log('获取信息完毕')
+      this.myPokers.forEach((pkItem,pkIndex)=>{ //将已布阵的卡牌设置位置
         this.style.push(0)
         this.array.forEach(arItem=>{
           if(pkItem.pokerId == arItem.pokerId){
@@ -511,7 +531,7 @@ export default {
           }
         })
       })
-      this.initBcakground()
+      // this.initBcakground()
     }
   },
   watch:{
@@ -524,14 +544,15 @@ export default {
       service.AddMyArray({pokerList:JSON.stringify(data)})
     }
   },
-  onLoad(){
+  async onLoad(){
         console.log('onshow:',this.style)
   },
   async onShow () {
-     await this.initStyle();
+        await this.initStyle();
+        console.log(this.myPokers,this.pokerSrc,this.style)
+
   },
   async mounted () {
-    console.log(this.myPokers,this.pokerImg[this.myPokers[0].pokerId],this.myPokers[0].pokerId)
   }
 }
 </script>
@@ -551,21 +572,19 @@ export default {
     display: flex;
     width: 750rpx;
     height: 750rpx;
-    background: #9911ff;
+
     flex-wrap: wrap;
   }
   .array-item{
     width: 250rpx;
     height: 250rpx;
-    border: 10px solid black;
+    border: 10rpx solid black;
     box-sizing: border-box;
-
   }
   .myPoker{
     border-radius: 20rpx;
-    border: 10px solid black;
-    height: 400rpx;  
-    width: 100vw; 
+    height: 440rpx;  
+    width: 750rpx; 
   }
   .myPoker-font{
     height: 80rpx;
@@ -575,10 +594,23 @@ export default {
     background: #9911ff
   }
   .poker-box{
+    border: 10rpx solid black;
+    box-sizing: border-box;
+    height: 355rpx;
+    width: 100%;
+  }
+  .poker-box2{
     display: flex;
     flex-wrap: wrap;
-    height: 320rpx;
+    justify-content: flex-start;
+    border: 10rpx solid black;
+    box-sizing: border-box;
+    height: 355rpx;
     width: 100%;
+    overflow-y: scroll;
+  }
+  .poker-box2 div{
+    margin-left: 10rpx
   }
   /* .arrayPokerShow{
     width: 150rpx;

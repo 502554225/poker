@@ -7,7 +7,7 @@
       } 
       return new Promise((resolve, reject) => {
         wx.request({
-          url: 'https://localhost:44322/api/'+url,
+          url: 'https://localhost:5001/api/'+url,
           data: data,
           header: header,
           method: method,

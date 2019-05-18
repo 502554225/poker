@@ -12,13 +12,8 @@
           <div class="vigour" :class="'vigour'+pokerData.vigour"></div>
         </div>
       </div>
-      <div class="img">
-        {{pokerData.life}}
-        {{pokerData.vigour}}
-        {{pokerData.aggressivity}}
-        {{pokerData.defenses}}
-      </div>
-      <span class="damage" :class="{'damageAn':damageClass}">{{damage}}</span>
+      <img class="img" :src="pokerData.src">
+      <div class="damage" :class="{'damageAn':damageClass}">{{damage}}</div>
     </div>
 </template>
 
@@ -64,7 +59,6 @@
             setTimeout(function() {
               vm.damageClass=false
             },450)
-            // this.life=val-val%10
           }
         }
       },
@@ -86,7 +80,7 @@
       // this.imgSrc=pokerData
     },
     mounted(){
-      // console.log(this.pokerData)
+      console.log('pkddddd:',this.pokerData)
       
     }
   };
@@ -100,8 +94,7 @@
     position: relative;
     width: 160rpx;
     height:160rpx;
-    background: #aaaaaa;
-    border:  1rpx solid #000;
+    /* border:  1rpx solid #000; */
   }
   .poker image{
     width: 100%;
@@ -238,8 +231,12 @@
   .damage{
     position: absolute;
     top: 10rpx;
+    left: 0;
+    width: 150rpx;
+    height: 20rpx;
     text-align: center;
     visibility: hidden;
+    z-index: 10;
   }
   .life-vigour-box{
     height: 20rpx;

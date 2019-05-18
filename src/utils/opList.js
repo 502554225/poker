@@ -1,7 +1,6 @@
 var opList = [
     [ // 0
         {pokerId :1,level : 1,x : 1, y : 2} ,
-        {pokerId :1,level : 1,x : 1, y : 3} ,
     ],
     [ // 1
         {pokerId :2,level : 2,x : 1, y : 2} ,

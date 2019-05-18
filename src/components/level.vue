@@ -1,8 +1,8 @@
 <template>
         <div class="levelBody">
-            <img class="img" src="../../static/img/back-face-pattern.png" >
+            <img class="img" :src="imgsrc" >
             <div class="levelInfor">
-                <div>第{{num}}关：名字</div>
+                <div>第{{num}}关</div>
                 <div class="levelBtn">
                     <div @click="toGuanka">开始闯关</div>
                     <div v-if="saodangShow" @click="saodang">扫荡关卡</div>
@@ -13,6 +13,7 @@
 <script>
 import store from '../store/store.js';
 import service from '../api/service.js';
+import {opList2} from '../utils/imgSrc.js'
 export default {
     props:{
         levelInfor:{
@@ -26,7 +27,7 @@ export default {
     },
     data(){
         return{
-
+            imgsrc:''
         }
     },
     computed:{
@@ -47,7 +48,10 @@ export default {
         saodang(){
             this.$emit('saodang',this.num)
         }
-    }
+    },
+     mounted(){
+         this.imgsrc = opList2[this.num]
+     }
 }
 </script>
 

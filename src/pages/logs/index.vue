@@ -11,16 +11,16 @@
     </div>
     <div class="AD">
       <div v-if="page==='guanka'" class="guanka">
-        <scroll-view scroll-y class="guanka-box">
+        <scroll-view scroll-y class="guanka-box" style="background:url(../../../static/img/bg1.jpg);background-size:cover;">
           <level  v-for="(item,key) of guanka" :key="key" :num="guanka-key" @saodang="saodang"></level>
         </scroll-view>
       </div>
       <div v-if="page==='kapai'" class="kapai">
         <div class="kapai-show">
           <pokerbase width="250" :pokerData="showPoker" ></pokerbase>
-          <div class="showData">
+          <div class="showData" style="background:#D56E32">
             <div class="showData-title"><div>{{showPoker.pokerName}}</div></div>
-            <div class="showData-body">
+            <div class="showData-body" >
               <div>生命：{{showPoker.life}}</div>
               <div>攻击：{{showPoker.aggressivity}}</div>
               <div>防御：{{showPoker.defenses}}</div>
@@ -29,11 +29,11 @@
               <div>命中：{{showPoker.hit}}</div>
               <div>闪避：{{showPoker.evade}}</div>
               <div>等级：{{showPoker.level}}</div>
-              <div>技能：{{showPoker.skill}}</div>
+              <div>技能：{{skillInt[showPoker.pokerId]}}</div>
             </div>
           </div>
         </div>
-        <scroll-view scroll-y class="kapai-box">
+        <scroll-view scroll-y class="kapai-box" style="background:url(../../../static/img/bg4.jpg);background-size:cover;">
           <div class="kapai-box2">
             <pokerbase  v-for="(poker,key) in pokers" :key="key"  :pokerData="poker" marginBottom="10" @choosePoker="choosePoker" width="181">
               {{poker.name}}   
@@ -42,13 +42,13 @@
         </scroll-view>
       </div>
       <div v-if="page==='Draw'" class="draw">
-        <h2 style="font-size:24px;text-align:center">xxx的商店</h2>
-        <div v-if="!isDrive" class="content-box">
+        <div class="shop" style="font-size:24px;text-align:center;background:url(../../../static/img/shop2.png);background-size:cover;color:#fff">商店</div>
+        <div v-if="!isDrive" class="content-box" style="background:url(../../../static/img/bg6.jpg);background-size:cover;">
           <goods v-for="(item,key) in goodsInfors" :key="key" :goodsInfor="item" @draw="toDraw" @goods="goods"></goods>
         </div>
-        <div v-if="isDrive" class="draw-body" > 
+        <div v-if="isDrive" class="draw-body" style="background:url(../../../static/img/bg6.jpg);background-size:cover;"> 
           <div class="draw-box">
-            <pokerbase v-for="(item,key) of 4" :key="key" check="true" @pokerFull="drawPopup = true" @addPoker="drawBtn = true" :isInit="drawInit"></pokerbase>
+            <pokerbase v-for="(item,key) of 4" :key="key" check="true" @pokerFull="drawPopup = true" @addPoker="addPoker" @noNum="noNum" :isInit="drawInit"></pokerbase>
           </div>
           <div v-if="drawBtn" class="drawBtn-box">
             <button @click="drawAgain" size="mini">再抽一次</button>
@@ -58,12 +58,24 @@
       </div>
     </div>
       <div class="btn-box">
-        <button size="mini" @click="toGuanka">开始闯关</button>
-        <button size="mini" @click="toKapai">我的卡牌</button>
-        <button size="mini" @click="toArray">我的布阵</button>
-        <button size="mini" @click="toDrive">抽牌</button>
+        <div class="menu-item" :class="{'choose-menu':chooseNum === 0}" @click="toGuanka">
+          <img class="menu-img" src="../../../static/img/guanka.png" background-size="cover">
+          <span class="menu-font">闯关</span>
+          </div>
+        <div class="menu-item" :class="{'choose-menu':chooseNum === 1}" @click="toKapai">
+          <img class="menu-img" src="../../../static/img/poker.png" background-size="cover">
+          <span class="menu-font">卡牌</span>
+          </div>
+        <div class="menu-item" :class="{'choose-menu':chooseNum === 2}" @click="toArray">
+          <img class="menu-img" src="../../../static/img/array.png" background-size="cover">
+          <span class="menu-font">布阵</span> 
+          </div>
+        <div class="menu-item" :class="{'choose-menu':chooseNum === 3}" @click="toDrive">
+          <img class="menu-img" src="../../../static/img/shop.png" background-size="cover">
+          <span class="menu-font">商店</span> 
+          </div>
       </div>
-      <popup ref="saodang" title="扫荡" type="saodang" :show="popupShow" @confirm="popupConfirm" @success="successPopup = true" @fail="failPopup = true"></popup>
+      <popup ref="saodang" title="扫荡" type="saodang" :show="popupShow" @confirm="popupConfirm" @success="success" @fail="failPopup = true"></popup>
       <popup title="提示" words="扫荡成功！" :show="successPopup" @confirm="popupConfirm"></popup>
       <popup title="提示" words="体力不足！" :show="failPopup" @confirm="popupConfirm"></popup>
       <popup title="提示" :words="goodsWords" :show="goodsPopup" @confirm="popupConfirm"></popup>
@@ -84,6 +96,8 @@ import level from '@/components/level';
 import goods from '@/components/goods';
 import Infors from '../../utils/goodsInfors.js';
 import popup from '../../components/popup/popup.vue';
+import {myList2, myList1 } from "../../utils/imgSrc.js";
+import skillIntro from "../../utils/skillIntro.js";
 export default {
   components: {   
     card,
@@ -104,6 +118,7 @@ export default {
       choosePokerIndex:'',
       showPoker:[],
       goodsInfors:Infors,
+      chooseNum:0, //菜单栏控制
       popupShow:false, //扫荡弹窗
       failPopup:false, //扫荡失败弹窗
       successPopup:false, //扫荡成功弹窗
@@ -112,6 +127,7 @@ export default {
       drawBtn:false, //抽卡成功后按钮,
       drawInit:false,
       goodsWords:'',//购买弹窗的words
+      skillInt:skillIntro,
       userInfor:{
         avatarUrl:'',
         nickName:''
@@ -119,20 +135,22 @@ export default {
       grooveList:[
         {
           font:'体力',
-          src:'../../../static/img/back-face-pattern.png',
+          src:'../../../static/img/tili.png',
           num:0
         },
         {
           font:'金币',
-          src:'../../../static/img/back-face-pattern.png',
+          src:'../../../static/img/gold.png',
           num:0
         },
         {
           font:'抽卡',
-          src:'../../../static/img/back-face-pattern.png',
+          src:'../../../static/img/chouka.png',
           num:0
         },
-      ]
+      ],
+      myInfor:{
+      }
     }
   },
   onLoad(){
@@ -143,14 +161,35 @@ export default {
     this.init()
   },
   methods:{
+    success(){
+      this.successPopup = true
+      this.initGrooveList()
+    },
+    addPoker(){
+      this.drawBtn = true  
+      this.initGrooveList()
+    },
+    noNum(){
+      console.log('你的抽卡次数不足！')
+      this.goodsPopup = true
+      this.goodsWords = '你的抽卡次数不足！'
+    },
     goods(data){
+      this.initGrooveList()
       this.goodsWords = data
       this.goodsPopup = true
     },
     drawAgain(){
-      this.drawPopup = false
-      this.drawBtn = false 
+      console.log('again')
       this.drawInit = true
+      this.drawPopup = false
+      console.log('chi:',this.$children)
+      this.$children.forEach((item,index)=>{
+        if(8<=index<=11){
+          item.isCheck = false
+        }
+      })
+      this.drawBtn = false 
       this.drawInit = false
     },
     drawOver(){
@@ -201,6 +240,7 @@ export default {
       })
       c.forEach(item=>{ //添加isChoose属性 避免后续报错
         item.isChoose = false
+        item.src = myList2[item.pokerId]
       })
       c[0].isChoose = true
       this.pokers = c
@@ -233,15 +273,17 @@ export default {
       await service.GetMyInfor().then(res=>{ 
         store.commit('setMyInfor',res.data)
       })
+      this.initGrooveList()
+      console.log('store:',store.state.myInfor)
+      this.guanka=store.state.myInfor.levelG
+    },
+    async initGrooveList(){
       let grooveList = this.grooveList
       grooveList[0].num = store.state.myInfor.fatigueNum;
       grooveList[1].num = store.state.myInfor.gold;
       grooveList[2].num = store.state.myInfor.drawNum;
       this.grooveList= grooveList
-      console.log('store:',store.state.myInfor)
-      this.guanka=store.state.myInfor.levelG
     }
-
   },
   watch:{
     // userInfor:{
@@ -260,6 +302,8 @@ export default {
 <style scoped>
 .main{
   position: relative;
+  width: 100vw;
+  height: 100vh;
 }
 .information{
   display: flex;
@@ -390,5 +434,34 @@ export default {
   width: 100%;
   height: 98%;
   padding: 10rpx;
+}
+.btn-box{
+  width: 100%;
+  height: 110rpx;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  background: #bbb
+}
+.menu-item{
+  position: relative;
+  width: 25%;
+  height: 100%;
+  flex: auto;
+}
+.menu-img{
+  width: 95rpx;
+  height: 95rpx;
+  margin-left: 47rpx;
+}
+.menu-font{
+  position: absolute;
+  left: 0;
+  width: 100%;
+  top: 65rpx;
+  color: #fff;
+  text-align: center;
+  font-size: 16px;
+  font-weight: 700;
 }
 </style>

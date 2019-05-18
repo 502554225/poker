@@ -1,20 +1,20 @@
 var goodsInfors =[
     {
-        src:'../../../static/img/back-face-pattern.png',
+        src:'../../static/img/kax1.png',
         type:'gold',
         num:1000,
         get:'drawNum',
-        getNumm:1,
+        getNum:1,
     },
     {
-        src:'../../../static/img/back-face-pattern.png',
+        src:'../../static/img/kax10.png',
         type:'gold',
         num:9800,
         get:'drawNum',
-        getNumm:10
+        getNum:10
     },
     {
-        src:'../../../static/img/back-face-pattern.png',
+        src:'../../static/img/tochou.png',
         type:'drawNum',
     },
 ]
